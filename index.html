@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Progress</title>
+    <!-- Подключение шрифтов -->
+    <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Baloo+2&family=Fredoka+One&family=Inter&display=swap" rel="stylesheet">
+    <style>
+        /* Базовый размер шрифта для масштабирования */
+        html {
+            font-size: 16px;
+        }
+
+        /* Стили для body */
+        body {
+            background-color: #1F0426;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            word-wrap: break-word;
+        }
+
+        body:before {
+            content: '';
+            display: block;
+            height: 100vh;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            z-index: 0;
+            background: linear-gradient(45deg, #A000A3, #cf7fd1, #c35ec5, #b63db9, #aa1cad);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            opacity: 0.05;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #wrapper {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            transform-origin: top center;
+        }
+
+        #content-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #container01 {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(45deg, rgba(29,29,36,0.329) 0%, rgba(225,23,230,0.478) 100%);
+            background-position: 0% 0%;
+            background-repeat: repeat;
+            background-size: cover;
+            -webkit-backdrop-filter: blur(0.15rem);
+            backdrop-filter: blur(0.15rem);
+            border-radius: 2.25rem;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #container01 > .wrapper {
+            width: 100%;
+            max-width: 56rem;
+        }
+
+        #container01 > .wrapper > .inner {
+            padding: 3rem;
+            border-radius: calc(2.25rem - 0px);
+        }
+
+        #container01.columns > .wrapper > .inner {
+            flex-wrap: wrap;
+            display: flex;
+            align-items: center;
+        }
+
+        #container01.columns > .wrapper > .inner > * {
+            flex-grow: 0;
+            flex-shrink: 0;
+            max-width: 100%;
+            text-align: center;
+            padding: 0 0 0 2rem;
+        }
+
+        #container01.columns > .wrapper > .inner > *:first-child {
+            margin-left: calc(2rem * -1);
+        }
+
+        #container01 > .wrapper > .inner > :nth-child(1) {
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .text-container {
+            flex-grow: 1;
+        }
+
+        .image {
+            display: block;
+            line-height: 0;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .image .frame {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            vertical-align: top;
+            width: 100%;
+        }
+
+        .image .frame img {
+            border-radius: 0 !important;
+            max-width: 100%;
+            vertical-align: top;
+            width: inherit;
+        }
+
+        #image02 .frame {
+            width: 6rem;
+            border-radius: 100%;
+        }
+
+        #image02 .frame img {
+            transition: transform 0.25s ease, filter 0.25s ease;
+        }
+
+        #image02 .frame:hover img {
+            transform: scale(1.06);
+        }
+
+        #text02 {
+            text-transform: uppercase;
+            color: rgba(255,0,0,0.412);
+            font-family: 'Alata', sans-serif;
+            letter-spacing: 0.3rem;
+            width: calc(100% + 0.3rem);
+            font-size: 0.875em;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        #text02 strong {
+            color: #FF0000;
+        }
+
+        #text03 {
+            color: #FFFFFF;
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.875em;
+            line-height: 1.125;
+            font-weight: 400;
+        }
+
+        #text01 {
+            color: #FFFFFF;
+            font-family: 'Baloo', cursive;
+            font-size: 1em;
+            line-height: 1.75;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        .buttons {
+            cursor: default;
+            display: flex;
+            justify-content: flex-end;
+            letter-spacing: 0;
+            padding: 0;
+        }
+
+        .buttons li {
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .buttons li a {
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        #buttons01 {
+            gap: 1.5rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        #buttons01 li a {
+            display: inline-flex;
+            width: auto;
+            height: 2.875rem;
+            line-height: 2.875rem;
+            padding: 0 1rem;
+            vertical-align: middle;
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            font-weight: 400;
+            border-radius: 1.44rem;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            transition: transform 0.25s ease, color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        #buttons01 li a img {
+            height: 23px;
+            width: 23px;
+            margin-left: 0.5em;
+            margin-right: calc(-0.125em + 0rem);
+            transition: fill 0.25s ease;
+        }
+
+        #buttons01 li a .label {
+            overflow: hidden;
+            flex-grow: 1;
+            flex-shrink: 1;
+            text-align: left;
+            width: auto;
+        }
+
+        #buttons01 .button {
+            background-color: rgba(51,51,64,0.478);
+            color: #FFFFFF;
+            background-image: linear-gradient(206deg, rgba(71,71,89,0.478) 0%, rgba(51,51,64,0.004) 100%);
+            background-position: 0% 0%;
+            background-repeat: repeat;
+            background-size: cover;
+        }
+
+        #buttons01 li a:hover {
+            transform: scale(1.0425);
+        }
+
+        #buttons01 .n01 {
+            background-color: #FB8676;
+            color: #FFFFFF;
+            background-image: linear-gradient(206deg, #FCA5A5 0%, rgba(251,134,118,0.008) 100%);
+        }
+
+        #buttons01 .n02 {
+            background-color: #4A4A4A;
+            color: #D1D5DB;
+            background-image: linear-gradient(206deg, #6B7280 0%, rgba(74,74,74,0.008) 100%);
+        }
+
+        #buttons01 .n03 {
+            background-color: #60A5FA;
+            color: #FFFFFF;
+            background-image: linear-gradient(206deg, #93C5FD 0%, rgba(96,165,250,0.008) 100%);
+        }
+
+        #buttons01 .n04 {
+            background-color: #FFB347;
+            color: #4A4A4A;
+            background-image: linear-gradient(206deg, #FECACA 0%, rgba(255,179,71,0.008) 100%);
+        }
+
+        #buttons01 .n05 {
+            background-color: #FF8F66;
+            color: #2E2E2E;
+            background-image: linear-gradient(206deg, #FFBC99 0%, rgba(255,143,102,0.008) 100%);
+        }
+
+        .divider {
+            width: 100%;
+            max-width: 1200px;
+            height: 2px;
+            background-color: #614298;
+            margin: 20px 0;
+        }
+
+        .tasks-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .columns-wrapper {
+            width: 820px; /* 400px (done-tasks) + 20px (gap) + 400px (upcoming-tasks) */
+            position: relative;
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 400px;
+        }
+
+        #done-tasks {
+            position: relative;
+        }
+
+        #upcoming-tasks {
+            position: absolute;
+            top: 0;
+            left: 420px; /* 400px (ширина done-tasks) + 20px (отступ) */
+        }
+
+        .task {
+            background-color: #8e2bdc;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 7px;
+            font-size: 42px;
+            width: 400px;
+            display: block;
+            white-space: normal;
+            height: auto;
+            min-height: 84px;
+            line-height: 1.2;
+            box-sizing: border-box;
+            font-family: 'Mouse Memoirs', sans-serif;
+        }
+
+        .task small {
+            font-size: 0.8em;
+            line-height: 1;
+            display: block;
+        }
+
+        .progress-bar {
+            font-family: monospace; /* Моноширинный шрифт для выравнивания символов */
+            font-size: 24px; /* Уменьшаем размер шрифта для полоски прогресса */
+            line-height: 1;
+            display: block;
+            margin-top: 5px; /* Небольшой отступ сверху */
+        }
+
+        .done-1 { opacity: 0.12; }
+        .done-2 { opacity: 0.25; }
+
+        .current-wrapper {
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .current-label {
+            position: absolute;
+            left: -125px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: normal;
+            font-size: 35px;
+            white-space: nowrap;
+            font-family: 'Mouse Memoirs', sans-serif;
+        }
+
+        .current {
+            font-weight: normal;
+        }
+
+        /* Масштабирование для узких экранов */
+        @media (max-width: 736px) {
+            #wrapper {
+                transform: scale(0.7);
+                width: calc(100% / 0.7);
+                overflow: hidden;
+            }
+            .columns-wrapper {
+                width: calc(820px / 0.7);
+            }
+            #upcoming-tasks {
+                left: calc(420px / 0.7);
+            }
+        }
+
+        @media (max-width: 480px) {
+            #wrapper {
+                transform: scale(0.5);
+                width: calc(100% / 0.5);
+            }
+            .columns-wrapper {
+                width: calc(820px / 0.5);
+            }
+            #upcoming-tasks {
+                left: calc(420px / 0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="content-wrapper">
+            <div id="container01" class="container columns">
+                <div class="wrapper">
+                    <div class="inner">
+                        <div>
+                            <div id="image02" class="image">
+                                <span class="frame">
+                                    <img src="./icons/profile_icon.jpg" alt="Profile Image">
+                                </span>
+                            </div>
+                            <div class="text-container">
+                                <p id="text02"><strong>Commissions closed</strong></p>
+                                <h1 id="text03">CupOfUwU</h1>
+                            </div>
+                            <ul id="buttons01" class="buttons">
+                                <li>
+                                    <a href="https://www.patreon.com/cupofuwu" class="button n01" role="button">
+                                        <img src="icons/patreon.png" alt="Patreon">
+                                        <span class="label">Patreon</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://x.com/CupOfUwU1" class="button n02" role="button">
+                                        <img src="icons/x.png" alt="X">
+                                        <span class="label">X</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://bsky.app/profile/cupofuwu.bsky.social" class="button n03" role="button">
+                                        <img src="icons/bluesky.png" alt="Bluesky">
+                                        <span class="label">Bluesky</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://cupofuwu.newgrounds.com" class="button n04" role="button">
+                                        <img src="icons/newgrounds.png" alt="Newgrounds">
+                                        <span class="label">Newgrounds</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.furaffinity.net/user/cupofuwu" class="button n05" role="button">
+                                        <img src="icons/furaffinity.png" alt="FurAffinity">
+                                        <span class="label">FurAffinity</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="tasks-container">
+                <div class="columns-wrapper">
+                    <div class="column" id="done-tasks"></div>
+                    <div class="column" id="upcoming-tasks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const projects = {
+            done: [
+                "Atlyss citizen training<br><small>(Short loop)</small>100%", 
+                "Commission<br><small>SpaceCat and Moss</small>100%"
+            ],
+            current: "Dusk and Mousy Shot 5<br><small>(Gift for Tabuley)</small>97%",
+            upcoming: [
+				"WIP Commission<br><small>WIP Rough Tentacles</small>20%", 
+                "WIP Judy Deepthroat<br><small>(Short loop)<br>inspired by Doxy's Sweet Sting</small>"
+            ]
+        };
+
+        function createProgressBar(percentage) {
+            const totalBars = 14; // Общее количество квадратов
+            filledBars = Math.round((percentage / 100) * totalBars); // Сколько квадратов заполнено
+            emptyBars = totalBars - filledBars; // Сколько квадратов пусто
+			
+			if (percentage >= 100) {
+				percentage = 100;
+				filledBars -= 1;
+			}
+			if (percentage <= 0) {
+				percentage = 0;
+				emptyBars += 1;
+			}
+				
+            // Формируем полоску
+            let progressBar = "[";
+            for (let i = 0; i < filledBars; i++) {
+                progressBar += "■";
+            }
+            // Добавляем процент сразу после заполненных квадратов
+            let percentageText = percentage.toString() + "%";
+            
+            progressBar += percentageText;
+
+            // Добавляем пустые квадраты после процента
+            for (let i = 0; i < emptyBars; i++) {
+                progressBar += "□";
+            }
+            
+            progressBar += "]";
+            return progressBar;
+        }
+
+        function displayProjects() {
+            const doneTasksDiv = document.getElementById("done-tasks");
+            const upcomingTasksDiv = document.getElementById("upcoming-tasks");
+
+            // Обработка задач в done
+            projects.done.forEach((task, index) => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = `task done-${index + 1}`;
+
+                // Ищем процент в конце текста
+                const percentageMatch = task.match(/(\d+)%$/);
+                let taskText = task;
+                let progressBar = "";
+                if (percentageMatch) {
+                    const percentage = parseInt(percentageMatch[1], 10);
+                    taskText = task.replace(/\s*\d+%$/, ""); // Удаляем процент из текста
+                    progressBar = createProgressBar(percentage);
+                    if (progressBar) {
+                        progressBar = `<span class="progress-bar">${progressBar}</span>`;
+                    }
+                }
+
+                taskDiv.innerHTML = taskText + progressBar;
+                doneTasksDiv.appendChild(taskDiv);
+            });
+
+            // Обработка текущей задачи
+            const currentWrapper = document.createElement("div");
+            currentWrapper.className = "current-wrapper";
+
+            const currentLabel = document.createElement("span");
+            currentLabel.className = "current-label";
+            currentLabel.textContent = "I'm here>>>";
+
+            const currentTaskDiv = document.createElement("div");
+            currentTaskDiv.className = "task current";
+
+            // Ищем процент в конце текста текущей задачи
+            let currentTaskText = projects.current;
+            let currentProgressBar = "";
+            const currentPercentageMatch = currentTaskText.match(/(\d+)%$/);
+            if (currentPercentageMatch) {
+                const percentage = parseInt(currentPercentageMatch[1], 10);
+                currentTaskText = currentTaskText.replace(/\s*\d+%$/, "");
+                currentProgressBar = createProgressBar(percentage);
+                if (currentProgressBar) {
+                    currentProgressBar = `<span class="progress-bar">${currentProgressBar}</span>`;
+                }
+            }
+
+            currentTaskDiv.innerHTML = currentTaskText + currentProgressBar;
+            currentWrapper.appendChild(currentLabel);
+            currentWrapper.appendChild(currentTaskDiv);
+            doneTasksDiv.appendChild(currentWrapper);
+
+            // Обработка задач в upcoming
+            projects.upcoming.forEach(task => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task";
+
+                // Ищем процент в конце текста
+                const percentageMatch = task.match(/(\d+)%$/);
+                let taskText = task;
+                let progressBar = "";
+                if (percentageMatch) {
+                    const percentage = parseInt(percentageMatch[1], 10);
+                    taskText = task.replace(/\s*\d+%$/, "");
+                    progressBar = createProgressBar(percentage);
+                    if (progressBar) {
+                        progressBar = `<span class="progress-bar">${progressBar}</span>`;
+                    }
+                }
+
+                taskDiv.innerHTML = taskText + progressBar;
+                upcomingTasksDiv.appendChild(taskDiv);
+            });
+
+            // Функция для вычисления позиции upcoming-tasks
+            function updateUpcomingTasksPosition() {
+                const taskElements = doneTasksDiv.querySelectorAll(".task");
+                let totalHeight = 0;
+                taskElements.forEach((task, index) => {
+                    totalHeight += task.offsetHeight;
+                    if (index < taskElements.length - 1) {
+                        totalHeight += 10; // Отступ 10px между задачами
+                    }
+                });
+                totalHeight += 10; // Отступ 10px после последней задачи (task 3)
+                upcomingTasksDiv.style.top = `${totalHeight}px`;
+            }
+
+            // Выполняем расчёт после загрузки шрифтов
+            document.fonts.ready.then(() => {
+                updateUpcomingTasksPosition();
+            });
+
+            // Выполняем расчёт сразу (на случай, если шрифты уже загружены)
+            updateUpcomingTasksPosition();
+        }
+
+        displayProjects();
+    </script>
+</body>
+</html>
