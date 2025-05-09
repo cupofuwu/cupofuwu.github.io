@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Progress</title>
-    <!-- Подключение шрифтов -->
     <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Baloo+2&family=Fredoka+One&family=Inter&display=swap" rel="stylesheet">
     <style>
-        /* Базовый размер шрифта для масштабирования */
+        
         html {
             font-size: 16px;
         }
 
-        /* Стили для body */
+        
         body {
             background-color: #1F0426;
             color: white;
@@ -310,7 +309,7 @@
         }
 
         .columns-wrapper {
-            width: 820px; /* 400px (done-tasks) + 20px (gap) + 400px (upcoming-tasks) */
+            width: 820px;
             position: relative;
             display: flex;
             gap: 20px;
@@ -328,7 +327,7 @@
         #upcoming-tasks {
             position: absolute;
             top: 0;
-            left: 420px; /* 400px (ширина done-tasks) + 20px (отступ) */
+            left: 420px; 
         }
 
         .task {
@@ -354,11 +353,11 @@
         }
 
         .progress-bar {
-            font-family: monospace; /* Моноширинный шрифт для выравнивания символов */
-            font-size: 24px; /* Уменьшаем размер шрифта для полоски прогресса */
+            font-family: monospace; 
+            font-size: 24px; 
             line-height: 1;
             display: block;
-            margin-top: 5px; /* Небольшой отступ сверху */
+            margin-top: 5px; 
         }
 
         .done-1 { opacity: 0.12; }
@@ -384,7 +383,7 @@
             font-weight: normal;
         }
 
-        /* Масштабирование для узких экранов */
+        
         @media (max-width: 736px) {
             #wrapper {
                 transform: scale(0.7);
@@ -489,9 +488,9 @@
         };
 
         function createProgressBar(percentage) {
-            const totalBars = 14; // Общее количество квадратов
-            filledBars = Math.round((percentage / 100) * totalBars); // Сколько квадратов заполнено
-            emptyBars = totalBars - filledBars; // Сколько квадратов пусто
+            const totalBars = 14; 
+            filledBars = Math.round((percentage / 100) * totalBars); 
+            emptyBars = totalBars - filledBars; 
 			
 			if (percentage >= 100) {
 				percentage = 100;
@@ -502,17 +501,17 @@
 				emptyBars += 1;
 			}
 				
-            // Формируем полоску
+            
             let progressBar = "[";
             for (let i = 0; i < filledBars; i++) {
                 progressBar += "■";
             }
-            // Добавляем процент сразу после заполненных квадратов
+            
             let percentageText = percentage.toString() + "%";
             
             progressBar += percentageText;
 
-            // Добавляем пустые квадраты после процента
+            
             for (let i = 0; i < emptyBars; i++) {
                 progressBar += "□";
             }
@@ -525,18 +524,18 @@
             const doneTasksDiv = document.getElementById("done-tasks");
             const upcomingTasksDiv = document.getElementById("upcoming-tasks");
 
-            // Обработка задач в done
+            
             projects.done.forEach((task, index) => {
                 const taskDiv = document.createElement("div");
                 taskDiv.className = `task done-${index + 1}`;
 
-                // Ищем процент в конце текста
+                
                 const percentageMatch = task.match(/(\d+)%$/);
                 let taskText = task;
                 let progressBar = "";
                 if (percentageMatch) {
                     const percentage = parseInt(percentageMatch[1], 10);
-                    taskText = task.replace(/\s*\d+%$/, ""); // Удаляем процент из текста
+                    taskText = task.replace(/\s*\d+%$/, ""); 
                     progressBar = createProgressBar(percentage);
                     if (progressBar) {
                         progressBar = `<span class="progress-bar">${progressBar}</span>`;
@@ -547,7 +546,7 @@
                 doneTasksDiv.appendChild(taskDiv);
             });
 
-            // Обработка текущей задачи
+            
             const currentWrapper = document.createElement("div");
             currentWrapper.className = "current-wrapper";
 
@@ -558,7 +557,7 @@
             const currentTaskDiv = document.createElement("div");
             currentTaskDiv.className = "task current";
 
-            // Ищем процент в конце текста текущей задачи
+            
             let currentTaskText = projects.current;
             let currentProgressBar = "";
             const currentPercentageMatch = currentTaskText.match(/(\d+)%$/);
@@ -576,12 +575,12 @@
             currentWrapper.appendChild(currentTaskDiv);
             doneTasksDiv.appendChild(currentWrapper);
 
-            // Обработка задач в upcoming
+            
             projects.upcoming.forEach(task => {
                 const taskDiv = document.createElement("div");
                 taskDiv.className = "task";
 
-                // Ищем процент в конце текста
+                
                 const percentageMatch = task.match(/(\d+)%$/);
                 let taskText = task;
                 let progressBar = "";
@@ -598,26 +597,24 @@
                 upcomingTasksDiv.appendChild(taskDiv);
             });
 
-            // Функция для вычисления позиции upcoming-tasks
+            
             function updateUpcomingTasksPosition() {
                 const taskElements = doneTasksDiv.querySelectorAll(".task");
                 let totalHeight = 0;
                 taskElements.forEach((task, index) => {
                     totalHeight += task.offsetHeight;
                     if (index < taskElements.length - 1) {
-                        totalHeight += 10; // Отступ 10px между задачами
+                        totalHeight += 10; 
                     }
                 });
-                totalHeight += 10; // Отступ 10px после последней задачи (task 3)
+                totalHeight += 10; 
                 upcomingTasksDiv.style.top = `${totalHeight}px`;
             }
 
-            // Выполняем расчёт после загрузки шрифтов
             document.fonts.ready.then(() => {
                 updateUpcomingTasksPosition();
             });
 
-            // Выполняем расчёт сразу (на случай, если шрифты уже загружены)
             updateUpcomingTasksPosition();
         }
 
