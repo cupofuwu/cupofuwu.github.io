@@ -340,14 +340,15 @@
         .tasks-container {
             width: 100%;
             max-width: 1200px;
+            position: relative;
             display: flex;
             justify-content: center;
         }
 
         /* Columns wrapper for tasks */
         .columns-wrapper {
-            width: 100%;
-            max-width: 820px;
+            width: 820px;
+            position: relative;
             display: flex;
             gap: 20px;
         }
@@ -355,7 +356,7 @@
         /* Task column styling */
         .column {
             flex: 1;
-            min-width: 0;
+            min-width: 400px;
         }
 
         /* Done tasks container */
@@ -365,7 +366,9 @@
 
         /* Upcoming tasks container */
         #upcoming-tasks {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 420px;
         }
 
         /* Task item styling */
@@ -375,7 +378,7 @@
             margin: 10px 0;
             border-radius: 7px;
             font-size: 42px;
-            width: 100%;
+            width: 400px;
             display: block;
             white-space: normal;
             height: auto;
@@ -423,11 +426,23 @@
             font-family: 'Mouse Memoirs', sans-serif;
         }
 
+        /* Current task styling */
+        .current {
+            font-weight: normal;
+        }
+
         /* Mobile styles for screens up to 768px */
         @media (max-width: 768px) {
             /* Adjust content wrapper padding */
             #content-wrapper {
                 padding: 0 0.5rem;
+            }
+
+            /* Remove scaling from wrapper */
+            #wrapper {
+                transform: none;
+                width: 100%;
+                overflow: visible;
             }
 
             /* Reduce padding in container01 */
@@ -459,12 +474,14 @@
 
             /* Stack task columns vertically */
             .columns-wrapper {
+                width: 100%;
                 flex-direction: column;
-                max-width: 100%;
+                gap: 0;
             }
 
             /* Full width for columns */
             .column {
+                min-width: 0;
                 width: 100%;
             }
 
@@ -473,9 +490,10 @@
                 position: static;
             }
 
-            /* Reduce task font size */
+            /* Adjust task size for mobile */
             .task {
                 font-size: 28px;
+                width: 100%;
                 min-height: 60px;
                 padding: 8px 15px;
             }
@@ -518,7 +536,7 @@
                 width: 18px;
             }
 
-            /* Further reduce task font size */
+            /* Further adjust task size */
             .task {
                 font-size: 24px;
                 min-height: 50px;
@@ -659,4 +677,90 @@
                 let progressBar = "";
                 if (percentageMatch) {
                     const percentage = parseInt(percentageMatch[1], 10);
-                    task
+                    taskText = task.replace(/\s*\d+%$/, "");
+                    progressBar = createProgressBar(percentage);
+                    if (progressBar) {
+                        progressBar = `<span class="progress-bar">${progressBar}</span>`;
+                    }
+                }
+
+                taskDiv.innerHTML = taskText + progressBar;
+                doneTasksDiv.appendChild(taskDiv);
+            });
+
+            // Render current task
+            const currentWrapper = document.createElement("div");
+            currentWrapper.className = "current-wrapper";
+
+            const currentLabel = document.createElement("span");
+            currentLabel.className = "current-label";
+            currentLabel.textContent = "I'm here>>>";
+
+            const currentTaskDiv = document.createElement("div");
+            currentTaskDiv.className = "task current";
+
+            let currentTaskText = projects.current;
+            let currentProgressBar = "";
+            const currentPercentageMatch = currentTaskText.match(/(\d+)%$/);
+            if (currentPercentageMatch) {
+                const percentage = parseInt(currentPercentageMatch[1], 10);
+                currentTaskText = currentTaskText.replace(/\s*\d+%$/, "");
+                currentProgressBar = createProgressBar(percentage);
+                if (currentProgressBar) {
+                    currentProgressBar = `<span class="progress-bar">${currentProgressBar}</span>`;
+                }
+            }
+
+            currentTaskDiv.innerHTML = currentTaskText + currentProgressBar;
+            currentWrapper.appendChild(currentLabel);
+            currentWrapper.appendChild(currentTaskDiv);
+            doneTasksDiv.appendChild(currentWrapper);
+
+            // Render upcoming tasks
+            projects.upcoming.forEach(task => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task";
+
+                const percentageMatch = task.match(/(\d+)%$/);
+                let taskText = task;
+                let progressBar = "";
+                if (percentageMatch) {
+                    const percentage = parseInt(percentageMatch[1], 10);
+                    taskText = task.replace(/\s*\d+%$/, "");
+                    progressBar = createProgressBar(percentage);
+                    if (progressBar) {
+                        progressBar = `<span class="progress-bar">${progressBar}</span>`;
+                    }
+                }
+
+                taskDiv.innerHTML = taskText + progressBar;
+                upcomingTasksDiv.appendChild(taskDiv);
+            });
+
+            // Update position of upcoming tasks for desktop
+            function updateUpcomingTasksPosition() {
+                const taskElements = doneTasksDiv.querySelectorAll(".task");
+                let totalHeight = 0;
+                taskElements.forEach((task, index) => {
+                    totalHeight += task.offsetHeight;
+                    if (index < taskElements.length - 1) {
+                        totalHeight += 10; // Margin between tasks
+                    }
+                });
+                totalHeight += 10; // Additional margin
+                upcomingTasksDiv.style.top = `${totalHeight}px`;
+            }
+
+            // Ensure fonts are loaded before calculating position
+            document.fonts.ready.then(() => {
+                updateUpcomingTasksPosition();
+            });
+
+            updateUpcomingTasksPosition();
+        }
+
+        // Initialize project display
+        displayProjects();
+    </script>
+</body>
+</html>
