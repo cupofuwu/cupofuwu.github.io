@@ -4,8 +4,6 @@ echo Updating all to GitHub...
 :: Добавление файла index.html
 git add :/
 
-git add -u
-
 git reset -- main/update_all.bat
 git reset -- main/update_index.bat
 
