@@ -6,8 +6,8 @@ git add :/
 
 git add -u
 
-git reset -- main/update_all.bat
-git reset -- main/update_index.bat
+git checkout HEAD -- update_all.bat
+git checkout HEAD -- update_index.bat
 
 :: Создание коммита с автоматическим сообщением
 git commit -m "Auto-update all" || echo No changes to commit
