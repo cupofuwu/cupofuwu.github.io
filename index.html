@@ -692,6 +692,79 @@
                 grid-template-columns: 1fr;
             }
         }
+		
+		/* === Стили для ссылок в примерах (в .details) === */
+		.details .examples-list {
+			list-style: none;
+			padding: 0;
+			margin: 0.8rem 0;
+		}
+
+		.details .examples-list li {
+			margin-bottom: 0.6rem;
+		}
+
+		.details .examples-list a {
+			color: var(--accent-color);
+			text-decoration: none;
+			font-weight: 500;
+			font-family: 'Inter', sans-serif;
+			font-size: 0.95rem;
+			padding: 0.35rem 0.75rem;
+			border-radius: 0.6rem;
+			background: rgba(102, 204, 255, 0.08);
+			border: 1px solid rgba(102, 204, 255, 0.2);
+			display: inline-block;
+			transition: var(--transition);
+			position: relative;
+			overflow: hidden;
+		}
+
+		.details .examples-list a::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+			transition: left 0.6s ease;
+			z-index: 0;
+		}
+
+		.details .examples-list a span {
+			position: relative;
+			z-index: 1;
+		}
+
+		.details .examples-list a:hover {
+			color: var(--text-color);
+			background: rgba(102, 204, 255, 0.2);
+			border-color: var(--accent-color);
+			transform: translateY(-1px);
+			box-shadow: 0 0 10px rgba(102, 204, 255, 0.4);
+		}
+
+		.details .examples-list a:hover::before {
+			left: 100%;
+		}
+
+		.details .examples-list a:active {
+			transform: translateY(0);
+		}
+
+		/* Иконка внешней ссылки */
+		.details .examples-list a::after {
+			content: '↗';
+			margin-left: 0.4rem;
+			font-size: 0.8em;
+			opacity: 0.7;
+			transition: opacity 0.3s ease;
+		}
+
+		.details .examples-list a:hover::after {
+			opacity: 1;
+		}
     </style>
 </head>
 <body>
@@ -714,6 +787,7 @@
             </div>
             <h1>CupOfUwU</h1>
             <p class="commissions-status">Commissions Closed</p>
+			<p class="commissions-status">But I can offer a slot, with a longer commission completion time</p>
         </header>
 
         <!-- Social Links -->
@@ -756,42 +830,50 @@
         </section>
 
         <!-- Commissions Section -->
-        <section class="commissions" id="commissions">
-            <h2>Commission Info</h2>
-            <div class="commission-status">
-                <p class="commissions-status">Commissions Closed</p>
-            </div>
-			<!--
-            <div class="pricing-table">
-                <div class="pricing-card" data-aos="zoom-in">
-                    <div class="card-header">
-                        <h3>Loop/Short Animation</h3>
-                        <span class="price">$600</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="details">
-                            <p><strong>One Character:</strong> $600</p>
-                            <p><strong>Additional Character:</strong> Full price ($600)</p>
-                            <p><strong>Length:</strong> 1 second</p>
-                            <p><strong>Sound:</strong> None</p>
-                        </div>
-                        <div class="yes-no-lists">
-                            <div class="yes-list">
-                                <h4>Yes</h4>
-                                <p>Any of your fetish</p>
-                                <p>NSFW with feral/anthro</p>
-                            </div>
-                            <div class="no-list">
-                                <h4>No</h4>
-                                <p>Watersports, scat</p>
-                                <p>Vore, guro</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-			-->
-        </section>
+		<section class="commissions" id="commissions">
+			<h2>Commission Info</h2>
+			<div class="commission-status">
+				<p class="commissions-status">Commissions Closed</p>
+				<p class="commissions-status">But I can offer a slot, with a longer commission completion time</p>
+			</div>
+			
+			<div class="pricing-table">
+				<div class="pricing-card" data-aos="zoom-in">
+					<div class="card-header">
+						<h3>Loop/Short Animation</h3>
+						<span class="price">$600</span>
+					</div>
+					<div class="card-body">
+						<div class="details">
+							<p><strong>Loop animation for $600 without sound.</strong></p>
+							<p>1-2 second loop $600 per character.</p>
+							<p><strong>Example:</strong></p>
+							<ul class="examples-list">
+								<li><a href="https://x.com/CupOfUwU1/status/1983927166807986592" target="_blank">x.com/CupOfUwU1/status/1983927166807986592</a></li>
+								<li><a href="https://x.com/CupOfUwU1/status/1978876583000805540" target="_blank">x.com/CupOfUwU1/status/1978876583000805540</a></li>
+								<li><a href="https://x.com/CupOfUwU1/status/1899470460418392118" target="_blank">x.com/CupOfUwU1/status/1899470460418392118</a></li>
+								<li><a href="https://x.com/CupOfUwU1/status/1862469348457136165" target="_blank">x.com/CupOfUwU1/status/1862469348457136165</a></li>
+								<li><a href="https://x.com/CupOfUwU1/status/1811734924086423753" target="_blank">x.com/CupOfUwU1/status/1811734924086423753</a></li>
+							</ul>
+							<p><strong>I don't charge extra</strong> for tentacles, penis without character or anything like that.</p>
+							<p>If you are not sure about anything, you can ask me.</p>
+						</div>
+						<div class="yes-no-lists">
+							<div class="yes-list">
+								<h4>Yes</h4>
+								<p>Any of your fetish</p>
+								<p>NSFW with feral/anthro</p>
+							</div>
+							<div class="no-list">
+								<h4>No</h4>
+								<p>Watersports, scat, hyper</p>
+								<p>Vore, guro</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
         <!-- Contact Section -->
         <section class="contact" id="contact">
@@ -830,20 +912,13 @@
                 url: "https://www.patreon.com/posts/spooky-with-done-142045020",
                 image: "./images/spooky.png"
             },
-			{
-                text: "Sketch of the month",
-                description: "",
-                percentage: 50,
-                url: "",
-                image: "",
-				current: true
-            },
             {
                 text: "WIP Kodii Deepthroat",
                 description: "WIP colored animation",
                 percentage: 35,
                 url: "https://www.patreon.com/posts/wip-kodiis-new-139356564",
-                image: "./images/kodii2.png"
+                image: "./images/kodii2.png",
+				current: true
             }
         ];
 		//current: true
