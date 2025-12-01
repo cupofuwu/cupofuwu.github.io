@@ -1076,22 +1076,35 @@
 
             // Device Orientation for Mobile
             if (window.DeviceOrientationEvent) {
-                window.addEventListener('deviceorientation', (e) => {
-                    const { beta, gamma } = e;
-                    const maxTilt = 10;
-                    const maxTranslate = 50;
+				window.addEventListener('deviceorientation', (e) => {
+					const { beta, gamma } = e;
+					const maxAngle = 45; // Увеличиваем лимит, так как tiltX/Y используются для расчета
 
-                    const tiltX = Math.max(-maxTilt, Math.min(maxTilt, beta || 0));
-                    const tiltY = Math.max(-maxTilt, Math.min(maxTilt, gamma || 0));
-                    const translateX = (tiltY / maxTilt) * maxTranslate;
-                    const translateY = (tiltX / maxTilt) * maxTranslate;
+					// 1. Ограничиваем значения угла, чтобы они не были слишком большими
+					const clampedGamma = Math.max(-maxAngle, Math.min(maxAngle, gamma || 0));
+					const clampedBeta = Math.max(-maxAngle, Math.min(maxAngle, beta || 0));
+					
+					// 2. Рассчитываем сдвиг (Translate)
+					// Gamma (влево/вправо) -> TranslateX
+					// Beta (вперед/назад) -> TranslateY
+					// Применяем инверсию к Beta, чтобы движение по Y было естественным
+					
+					// Нормализация угла к диапазону [-1, 1] и умножение на максимальный сдвиг
+					const translateX = (clampedGamma / maxAngle) * maxTranslate;
+					const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; // <-- Инверсия для Beta
+					
+					// 3. Рассчитываем вращение (Tilt) - Используем исходный, меньший maxTilt для угла
+					const tiltX = (clampedBeta / maxAngle) * maxTilt; // Tilt X: наклон вокруг X оси (кивок)
+					const tiltY = (clampedGamma / maxAngle) * maxTilt; // Tilt Y: наклон вокруг Y оси (поворот)
 
-                    midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
-                    foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-                });
-            } else {
-                console.warn('DeviceOrientationEvent not supported');
-            }
+					// Применяем transform. Используйте translateX/Y, чтобы сдвигать слои
+					midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+					
+					foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+				});
+			} else {
+				console.warn('DeviceOrientationEvent not supported');
+			}
         }
 
         // Request Device Orientation Permission (iOS)
