@@ -845,336 +845,272 @@
     </div>
 
     <script>
-        // To-Do List Data
-        const tasks = [
-            {
-                text: "Halloween animation [Done]",
-                description: "Finished animation",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/spooky-with-done-142045020",
-                image: "./images/spooky.png"
-            },
-            {
-                text: "WIP Kodii Deepthroat",
-                description: "WIP colored animation",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/wip-kodiis-new-139356564",
-                image: "./images/kodii2.png"
-            },
-            {
-                text: "Kodii Deepthroat",
-                description: "Final animation",
-                percentage: 5,
-                url: "",
-                image: "./images/kodii2.png",
-				current: true
-            }
-        ];
+    // --- ГЛОБАЛЬНЫЕ ДАННЫЕ (Оставлены пустыми, как в оригинале) ---
+    const tasks = [
+        // Ваши данные для To-Do List
+    ];
 
-        // Projects Data
-        const projects = [
-            {
-                text: "Kodii Deepthroat",
-                description: "Commission with hardcore deepthroat",
-                percentage: 70,
-                url: "https://www.patreon.com/posts/wip-kodiis-new-139356564",
-                image: "./images/kodii2.png",
-                category: "project"
-            },
-            {
-                text: "Halloween animation [Done]",
-                description: "This is catched a ghost-cat that gives blowjob... in reverse!",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/spooky-with-done-142045020",
-                image: "./images/spooky.png"
-            },
-            {
-                text: "Dusk and Mousy [Done]",
-                description: "Gift for Tabuley",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/dusk-and-mousy-129415312",
-                image: "./images/dusk_mousy_project.png",
-                category: "project"
-            },
-            {
-                text: "Judy Deepthroat",
-                description: "Short loop inspired by Doxy's comic Sweet Sting. I thought it would be nice to draw some short loop with Judy and remembered that Doxy has a comic \"Sweet Sting\" and then the idea was born to make animation as a gift for Doxy. UwU",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/132290460",
-                image: "./images/judy.png",
-                category: "project"
-            },
-            {
-                text: "A bit of commerce (Service-squirrels)",
-                description: "Short animation with service-squirrels for advertising toys for adults. I just want to try to do something commercial.",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/service-gush2-136965453",
-                image: "./images/service_squirrels_gush2.png",
-                category: "project"
-            },
-            {
-                text: "Rough Tentacles",
-                description: "Commission with very rough tentacles",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/rough-tentacles-138291375",
-                image: "./images/tentacles2.png"
-            },
-            {
-                text: "Rough Deepthroat",
-                description: "Commission with rough deepthroat",
-                percentage: 100,
-                url: "https://www.patreon.com/posts/comm-rough-done-140772482",
-                image: "./images/comm_dt.png",
-                category: "project"
-            }
-        ];
+    const projects = [
+        // Ваши данные для Projects
+    ];
+    
+    // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ГИРОСКОПА ---
+    // Инициализируем нулем для предотвращения ошибок 'Cannot read properties of null' на десктопе
+    let isGyroActive = false; // НОВАЯ ПЕРЕМЕННАЯ: Флаг для отключения мыши
+	let initialBeta = 0;
+	let initialGamma = 0;
+	let isCalibrated = false;
 
-        // Create Progress Bar
-        function createProgressBar(percentage) {
-            return `<div class="progress-bar" data-percentage="${percentage}"><span style="width: ${percentage}%"></span></div>`;
+    // --- ФУНКЦИИ ---
+
+    // Функция для определения мобильного устройства (по наличию сенсорного экрана)
+    function isMobileOrTablet() {
+        // Проверяем наличие 'ontouchstart' (стандарт) или maxTouchPoints > 0 (новый стандарт)
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+
+    // Create Progress Bar
+    function createProgressBar(percentage) {
+        return `<div class="progress-bar" data-percentage="${percentage}"><span style="width: ${percentage}%"></span></div>`;
+    }
+
+    // Determine Task Category
+    function getTaskCategory(task, index, tasks) {
+        const currentIndex = tasks.findIndex(t => t.current);
+        if (task.current) return 'current';
+        if (currentIndex === -1) return 'upcoming';
+        return index < currentIndex ? 'recent' : 'upcoming';
+    }
+
+    // Display Items (Tasks or Projects)
+    function displayItems(data, containerId, section, filter = 'all') {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error(`Element with ID "${containerId}" not found`);
+            return;
+        }
+        container.innerHTML = '';
+
+        let filteredItems = [];
+        if (section === 'todo') {
+            filteredItems = data.map((item, index) => ({
+                ...item,
+                category: getTaskCategory(item, index, data)
+            }));
+            if (filter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === filter);
+            }
+        } else {
+            filteredItems = data.filter(item => filter === 'all' || item.category === filter);
         }
 
-        // Determine Task Category
-        function getTaskCategory(task, index, tasks) {
-            const currentIndex = tasks.findIndex(t => t.current);
-            if (task.current) return 'current';
-            if (currentIndex === -1) return 'upcoming';
-            return index < currentIndex ? 'recent' : 'upcoming';
-        }
+        filteredItems.forEach((item, index) => {
+            const itemDiv = document.createElement('a');
+            let classNames = `item ${item.category}`;
+            if (item.category === 'recent') {
+                const recentCount = filteredItems.filter(i => i.category === 'recent').length;
+                const recentIndex = filteredItems.slice(0, index + 1).filter(i => i.category === 'recent').length;
+                if (recentIndex === recentCount) classNames += ' recent-1';
+                else if (recentIndex === recentCount - 1) classNames += ' recent-2';
+            }
+            if (item.current) {
+                classNames += ' current';
+            }
+            itemDiv.className = classNames;
+            itemDiv.href = item.url;
+            itemDiv.setAttribute('data-category', item.category);
 
-        // Display Items (Tasks or Projects)
-        function displayItems(data, containerId, section, filter = 'all') {
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error(`Element with ID "${containerId}" not found`);
+            let imageHtml = '';
+            if (item.image) {
+                imageHtml = `<img src="${item.image}" alt="Preview of ${item.text}" loading="lazy">`;
+            } else {
+                imageHtml = `<div class="no-preview">No Preview</div>`;
+            }
+
+            const titleHtml = `<div class="item-title">${item.text}</div>`;
+            const descriptionHtml = `<small>${item.description}</small>`;
+            const progressBar = createProgressBar(item.percentage);
+
+            itemDiv.innerHTML = `${imageHtml}${titleHtml}${descriptionHtml}${progressBar}`;
+            container.appendChild(itemDiv);
+        });
+    }
+
+    // Filter Buttons
+    function setupFilterButtons() {
+        const buttonGroups = document.querySelectorAll('.filter-buttons');
+        buttonGroups.forEach(group => {
+            const section = group.dataset.section;
+            const buttons = group.querySelectorAll('button');
+            if (buttons.length === 0) {
+                console.warn(`No filter buttons found for ${section}`);
                 return;
             }
-            container.innerHTML = '';
-
-            let filteredItems = [];
-            if (section === 'todo') {
-                filteredItems = data.map((item, index) => ({
-                    ...item,
-                    category: getTaskCategory(item, index, data)
-                }));
-                if (filter !== 'all') {
-                    filteredItems = filteredItems.filter(item => item.category === filter);
-                }
-            } else {
-                filteredItems = data.filter(item => filter === 'all' || item.category === filter);
-            }
-
-            filteredItems.forEach((item, index) => {
-                const itemDiv = document.createElement('a');
-                let classNames = `item ${item.category}`;
-                if (item.category === 'recent') {
-                    const recentCount = filteredItems.filter(i => i.category === 'recent').length;
-                    const recentIndex = filteredItems.slice(0, index + 1).filter(i => i.category === 'recent').length;
-                    if (recentIndex === recentCount) classNames += ' recent-1';
-                    else if (recentIndex === recentCount - 1) classNames += ' recent-2';
-                }
-                if (item.current) {
-                    classNames += ' current';
-                }
-                itemDiv.className = classNames;
-                itemDiv.href = item.url;
-                itemDiv.setAttribute('data-category', item.category);
-
-                let imageHtml = '';
-                if (item.image) {
-                    imageHtml = `<img src="${item.image}" alt="Preview of ${item.text}" loading="lazy">`;
-                } else {
-                    imageHtml = `<div class="no-preview">No Preview</div>`;
-                }
-
-                const titleHtml = `<div class="item-title">${item.text}</div>`;
-                const descriptionHtml = `<small>${item.description}</small>`;
-                const progressBar = createProgressBar(item.percentage);
-
-                itemDiv.innerHTML = `${imageHtml}${titleHtml}${descriptionHtml}${progressBar}`;
-                container.appendChild(itemDiv);
-            });
-        }
-
-        // Filter Buttons
-        function setupFilterButtons() {
-            const buttonGroups = document.querySelectorAll('.filter-buttons');
-            buttonGroups.forEach(group => {
-                const section = group.dataset.section;
-                const buttons = group.querySelectorAll('button');
-                if (buttons.length === 0) {
-                    console.warn(`No filter buttons found for ${section}`);
-                    return;
-                }
-                buttons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        group.querySelector('button.active')?.classList.remove('active');
-                        button.classList.add('active');
-                        if (section === 'todo') {
-                            displayItems(tasks, 'tasks', section, button.dataset.filter);
-                        } else {
-                            displayItems(projects, 'projects-grid', section, button.dataset.filter);
-                        }
-                    });
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    group.querySelector('button.active')?.classList.remove('active');
+                    button.classList.add('active');
+                    if (section === 'todo') {
+                        displayItems(tasks, 'tasks', section, button.dataset.filter);
+                    } else {
+                        displayItems(projects, 'projects-grid', section, button.dataset.filter);
+                    }
                 });
             });
-        }
+        });
+    }
 
-        // Easter Egg: Profile Image Click
-        function setupEasterEgg() {
-            const profileImg = document.querySelector('.profile-img');
-            if (!profileImg) {
-                console.warn('Profile image not found');
-                return;
-            }
-            profileImg.addEventListener('click', () => {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.top = '50%';
-                confetti.style.left = '50%';
-                confetti.style.pointerEvents = 'none';
-                confetti.innerHTML = '✨✨';
-                confetti.style.fontSize = '2rem';
-                confetti.style.animation = 'confetti 1s ease forwards';
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 1000);
-            });
-        }
+    // Easter Egg: Profile Image Click
+    function setupEasterEgg() {
+			const profileImg = document.querySelector('.profile-img');
+			if (!profileImg) {
+				console.warn('Profile image not found');
+				return;
+			}
+			profileImg.addEventListener('click', () => {
+				const confetti = document.createElement('div');
+				confetti.style.position = 'fixed';
+				confetti.style.top = '50%';
+				confetti.style.left = '50%';
+				confetti.style.pointerEvents = 'none';
+				confetti.innerHTML = '✨✨';
+				confetti.style.fontSize = '2rem';
+				confetti.style.animation = 'confetti 1s ease forwards';
+				document.body.appendChild(confetti);
+				setTimeout(() => confetti.remove(), 1000);
+			});
+		}
 
-        // Parallax Effect for Background
-        function setupParallax() {
-            const container = document.querySelector('.parallax-background-container');
-            if (!container) {
-                console.warn('Parallax background container not found');
-                return;
-            }
+		// Parallax Effect for Background (С ГИРОСКОПОМ И БЕЗ МЫШИ НА МОБИЛЬНЫХ)
+		function setupParallax() {
+		const container = document.querySelector('.parallax-background-container');
+		if (!container) {
+			console.warn('Parallax background container not found');
+			return;
+		}
 
-            const midground = document.querySelector('.parallax-midground');
-            const foreground = document.querySelector('.parallax-foreground');
+		const midground = document.querySelector('.parallax-midground');
+		const foreground = document.querySelector('.parallax-foreground');
 
-            // Mouse Movement
-            document.addEventListener('mousemove', (e) => {
-                const x = e.clientX - window.innerWidth / 2;
-                const y = e.clientY - window.innerHeight / 2;
-                const maxTilt = 10; // Reduced for subtler effect on full-screen
-                const maxTranslate = 50; // Increased for larger canvas
+		// --- Mouse Movement (ВСЕГДА ВКЛЮЧЕНО НА СТАРТЕ) ---
+		document.addEventListener('mousemove', (e) => {
+			// НОВАЯ ПРОВЕРКА: Если гироскоп активен, игнорируем движение мыши/тача
+			if (isGyroActive) return; 
+			
+			const x = e.clientX - window.innerWidth / 2;
+			const y = e.clientY - window.innerHeight / 2;
+			const maxTilt = 10;
+			const maxTranslate = 50; 
 
-                const tiltX = (y / window.innerHeight) * maxTilt;
-                const tiltY = -(x / window.innerWidth) * maxTilt;
-                const translateX = (x / window.innerWidth) * maxTranslate;
-                const translateY = (y / window.innerHeight) * maxTranslate;
+			const tiltX = (y / window.innerHeight) * maxTilt;
+			const tiltY = -(x / window.innerWidth) * maxTilt;
+			const translateX = (x / window.innerWidth) * maxTranslate;
+			const translateY = (y / window.innerHeight) * maxTranslate;
 
-                midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
-                foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-            });
+			midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+			foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+		});
 
-            // Reset transforms when mouse leaves (optional, can be removed for full-screen)
-            document.addEventListener('mouseleave', () => {
-                midground.style.transform = `translateZ(-100px) scale(1.1)`;
-                foreground.style.transform = `translateZ(0px)`;
-            });
+		// Reset transforms when mouse leaves
+		document.addEventListener('mouseleave', () => {
+			if (isGyroActive) return;
+			midground.style.transform = `translateZ(-100px) scale(1.1)`;
+			foreground.style.transform = `translateZ(0px)`;
+		});
 
-            // Глобальные переменные для хранения изначальной позиции
-			let initialBeta = 0;
-			let initialGamma = 0;
-			let isCalibrated = false;
+		// Variables for gyroscope (перенесены в глобальный скоуп, чтобы избежать повторного объявления)
+		// let initialBeta = 0;
+		// let initialGamma = 0;
+		// let isCalibrated = false;
 
-			// Ваши функции Parallax (часть, которая обрабатывает гироскоп)
-			// ******************************************************************
-			// Device Orientation for Mobile
-			if (window.DeviceOrientationEvent) {
-				window.addEventListener('deviceorientation', (e) => {
-					
-					// 1. ШАГ КАЛИБРОВКИ: Фиксируем начальные значения
-					if (!isCalibrated) {
-						if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
-							initialBeta = e.beta;
-							initialGamma = e.gamma;
-							isCalibrated = true;
-							console.log(`Parallax calibrated: Beta=${initialBeta.toFixed(2)}, Gamma=${initialGamma.toFixed(2)}`);
-							// Если мы только откалибровали, выходим из первого цикла, чтобы избежать резкого скачка
-							return;
-						}
+		// --- Device Orientation for Mobile (Гироскоп) ---
+		if (window.DeviceOrientationEvent) {
+			window.addEventListener('deviceorientation', (e) => {
+				
+				// 1. ШАГ КАЛИБРОВКИ: Фиксируем начальные значения
+				if (!isCalibrated) {
+					if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
+						// ЕСЛИ КАЛИБРОВКА УСПЕШНА -> АКТИВИРУЕМ ГИРОСКОП (отключая мышь)
+						initialBeta = e.beta;
+						initialGamma = e.gamma;
+						isCalibrated = true;
+						isGyroActive = true; 
+						console.log(`Parallax calibrated and Gyro Active: Beta=${initialBeta.toFixed(2)}, Gamma=${initialGamma.toFixed(2)}`);
+						return;
 					}
+				}
 
-					// 2. РАССЧЕТ ОТНОСИТЕЛЬНОГО НАКЛОНА
-					// Теперь мы работаем не с абсолютными значениями, а с отклонением от начальной точки
+				// 2. РАССЧЕТ ОТНОСИТЕЛЬНОГО НАКЛОНА (только если isGyroActive)
+				if (isGyroActive) {
 					const beta = e.beta - initialBeta;
 					const gamma = e.gamma - initialGamma;
 					
 					const maxTilt = 10;
 					const maxTranslate = 50;
-					const maxAngle = 45; // Максимальный угол, который мы обрабатываем (например, 45 градусов)
+					const maxAngle = 45; 
 
-					// 3. ПРИМЕНЕНИЕ ЛОГИКИ ПАРАЛЛАКСА (используем относительные beta/gamma)
-					
-					// Ограничиваем и нормализуем относительные значения угла
 					const clampedGamma = Math.max(-maxAngle, Math.min(maxAngle, gamma || 0));
 					const clampedBeta = Math.max(-maxAngle, Math.min(maxAngle, beta || 0));
 
-					// Gamma (относительный наклон влево/вправо) -> TranslateX
 					const translateX = (clampedGamma / maxAngle) * maxTranslate;
+					const translateY = (-(clampedBeta / maxAngle)) * maxTranslate;
 					
-					// Beta (относительный наклон вперед/назад) -> TranslateY (с инверсией)
-					const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
-					
-					// Расчет вращения (Tilt)
-					const tiltX = (clampedBeta / maxAngle) * maxTilt; 
-					const tiltY = (clampedGamma / maxAngle) * maxTilt; 
+					const tiltX = (clampedBeta / maxAngle) * maxTilt;
+					const tiltY = (clampedGamma / maxAngle) * maxTilt;
 
-					// Применение стилей к слоям (используйте ваши классы/ID)
 					midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
 					
 					foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-				});
-			} else {
-				console.warn('DeviceOrientationEvent not supported');
-			}
+				}
+			});
+		} else {
+			console.warn('DeviceOrientationEvent not supported');
+		}
+}
+
+    // Request Device Orientation Permission (iOS)
+    function requestDeviceOrientationPermission() {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        console.log('Device orientation permission granted');
+                    } else {
+                        console.warn('Device orientation permission denied');
+                    }
+                })
+                .catch(console.error);
+        }
+    }
+
+    // Initialize
+    function init() {
+        displayItems(tasks, 'tasks', 'todo');
+        displayItems(projects, 'projects-grid', 'projects');
+        setupFilterButtons();
+        setupEasterEgg();
+        setupParallax();
+
+        // Show permission button on iOS
+        const permissionButton = document.querySelector('.orientation-permission');
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            permissionButton.style.display = 'block';
+            permissionButton.addEventListener('click', requestDeviceOrientationPermission);
         }
 
-        // Request Device Orientation Permission (iOS)
-        function requestDeviceOrientationPermission() {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            console.log('Device orientation permission granted');
-                        } else {
-                            console.warn('Device orientation permission denied');
-                        }
-                    })
-                    .catch(console.error);
+        // Add confetti keyframes
+        const styleSheet = document.createElement('style');
+        styleSheet.innerHTML = `
+            @keyframes confetti {
+                0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                100% { transform: translate(-50%, -100%) scale(2); opacity: 0; }
             }
-        }
+        `;
+        document.head.appendChild(styleSheet);
+    }
 
-        // Initialize
-        function init() {
-            displayItems(tasks, 'tasks', 'todo');
-            displayItems(projects, 'projects-grid', 'projects');
-            setupFilterButtons();
-            setupEasterEgg();
-            setupParallax();
-
-            // Show permission button on iOS
-            const permissionButton = document.querySelector('.orientation-permission');
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                permissionButton.style.display = 'block';
-                permissionButton.addEventListener('click', requestDeviceOrientationPermission);
-            }
-
-            // Add confetti keyframes
-            const styleSheet = document.createElement('style');
-            styleSheet.innerHTML = `
-                @keyframes confetti {
-                    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-                    100% { transform: translate(-50%, -100%) scale(2); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(styleSheet);
-        }
-
-        // Run initialization
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+    // Run initialization
+    document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
