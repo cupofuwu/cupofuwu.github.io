@@ -1074,30 +1074,55 @@
                 foreground.style.transform = `translateZ(0px)`;
             });
 
-            // Device Orientation for Mobile
-            if (window.DeviceOrientationEvent) {
-				window.addEventListener('deviceorientation', (e) => {
-					const { beta, gamma } = e;
-					const maxAngle = 45; // Увеличиваем лимит, так как tiltX/Y используются для расчета
+            // Глобальные переменные для хранения изначальной позиции
+			let initialBeta = 0;
+			let initialGamma = 0;
+			let isCalibrated = false;
 
-					// 1. Ограничиваем значения угла, чтобы они не были слишком большими
+			// Ваши функции Parallax (часть, которая обрабатывает гироскоп)
+			// ******************************************************************
+			// Device Orientation for Mobile
+			if (window.DeviceOrientationEvent) {
+				window.addEventListener('deviceorientation', (e) => {
+					
+					// 1. ШАГ КАЛИБРОВКИ: Фиксируем начальные значения
+					if (!isCalibrated) {
+						if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
+							initialBeta = e.beta;
+							initialGamma = e.gamma;
+							isCalibrated = true;
+							console.log(`Parallax calibrated: Beta=${initialBeta.toFixed(2)}, Gamma=${initialGamma.toFixed(2)}`);
+							// Если мы только откалибровали, выходим из первого цикла, чтобы избежать резкого скачка
+							return;
+						}
+					}
+
+					// 2. РАССЧЕТ ОТНОСИТЕЛЬНОГО НАКЛОНА
+					// Теперь мы работаем не с абсолютными значениями, а с отклонением от начальной точки
+					const beta = e.beta - initialBeta;
+					const gamma = e.gamma - initialGamma;
+					
+					const maxTilt = 10;
+					const maxTranslate = 50;
+					const maxAngle = 45; // Максимальный угол, который мы обрабатываем (например, 45 градусов)
+
+					// 3. ПРИМЕНЕНИЕ ЛОГИКИ ПАРАЛЛАКСА (используем относительные beta/gamma)
+					
+					// Ограничиваем и нормализуем относительные значения угла
 					const clampedGamma = Math.max(-maxAngle, Math.min(maxAngle, gamma || 0));
 					const clampedBeta = Math.max(-maxAngle, Math.min(maxAngle, beta || 0));
-					
-					// 2. Рассчитываем сдвиг (Translate)
-					// Gamma (влево/вправо) -> TranslateX
-					// Beta (вперед/назад) -> TranslateY
-					// Применяем инверсию к Beta, чтобы движение по Y было естественным
-					
-					// Нормализация угла к диапазону [-1, 1] и умножение на максимальный сдвиг
-					const translateX = (clampedGamma / maxAngle) * maxTranslate;
-					const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; // <-- Инверсия для Beta
-					
-					// 3. Рассчитываем вращение (Tilt) - Используем исходный, меньший maxTilt для угла
-					const tiltX = (clampedBeta / maxAngle) * maxTilt; // Tilt X: наклон вокруг X оси (кивок)
-					const tiltY = (clampedGamma / maxAngle) * maxTilt; // Tilt Y: наклон вокруг Y оси (поворот)
 
-					// Применяем transform. Используйте translateX/Y, чтобы сдвигать слои
+					// Gamma (относительный наклон влево/вправо) -> TranslateX
+					const translateX = (clampedGamma / maxAngle) * maxTranslate;
+					
+					// Beta (относительный наклон вперед/назад) -> TranslateY (с инверсией)
+					const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
+					
+					// Расчет вращения (Tilt)
+					const tiltX = (clampedBeta / maxAngle) * maxTilt; 
+					const tiltY = (clampedGamma / maxAngle) * maxTilt; 
+
+					// Применение стилей к слоям (используйте ваши классы/ID)
 					midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
 					
 					foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
