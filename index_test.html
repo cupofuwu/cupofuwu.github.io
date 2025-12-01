@@ -72,18 +72,18 @@
             width: 100%;
             height: 100%;
             background: url('./images/background.jpg') center/cover no-repeat; /* Replace with your background image */
-            transform: translateZ(-200px) scale(1.2);
+            transform: translateZ(-200px) scale(1);
             z-index: -2;
-            opacity: 0.8; /* Adjust for visibility */
+            opacity: 1; /* Adjust for visibility */
         }
 
         /* Parallax Layers */
         .parallax-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
             background-size: cover;
             background-position: center;
             transition: transform 0.1s ease-out;
@@ -92,7 +92,7 @@
         /* Midground Layer */
         .parallax-midground {
             background: url('./images/midground.png') center/cover no-repeat; /* Replace with your midground image */
-            transform: translateZ(-100px) scale(1.1);
+            transform: translateZ(-100px) scale(0.8);
             z-index: -1;
             opacity: 1.0; /* Adjust for layering */
         }
@@ -100,7 +100,7 @@
         /* Foreground Layer */
         .parallax-foreground {
             background: url('./images/foreground.png') center/cover no-repeat; /* Replace with your foreground image */
-            transform: translateZ(0px);
+            transform: translateZ(0px) scale(0.8);
             z-index: 0;
             opacity: 1.0; /* Adjust for layering */
         }
@@ -1007,15 +1007,15 @@
 			const translateX = (x / window.innerWidth) * maxTranslate;
 			const translateY = (y / window.innerHeight) * maxTranslate;
 
-			midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
-			foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+			midground.style.transform = `translateZ(-100px) scale(0.8) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+			foreground.style.transform = `translateZ(0px) scale(0.8) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 		});
 
 		// Reset transforms when mouse leaves
 		document.addEventListener('mouseleave', () => {
 			if (isGyroActive) return;
-			midground.style.transform = `translateZ(-100px) scale(1.1)`;
-			foreground.style.transform = `translateZ(0px)`;
+			midground.style.transform = `translateZ(-100px) scale(0.8)`;
+			foreground.style.transform = `translateZ(0px) scale(0.8)`;
 		});
 
 		// Variables for gyroscope (перенесены в глобальный скоуп, чтобы избежать повторного объявления)
@@ -1058,9 +1058,9 @@
 					const tiltX = (clampedBeta / maxAngle) * maxTilt;
 					const tiltY = (clampedGamma / maxAngle) * maxTilt;
 
-					midground.style.transform = `translateZ(-100px) scale(1.1) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+					midground.style.transform = `translateZ(-100px) scale(0.8) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
 					
-					foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+					foreground.style.transform = `translateZ(0px) scale(0.8) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 				}
 			});
 		} else {
