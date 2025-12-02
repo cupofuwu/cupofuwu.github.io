@@ -38,6 +38,7 @@
         html {
             font-size: clamp(14px, 2.5vw, 16px);
             scroll-behavior: smooth;
+			--stable-vh: 1vh;
         }
 
         body {
@@ -58,7 +59,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(var(--stable-vh) * 100);   /* ← теперь не прыгает */
             perspective: 1000px;
             z-index: -10;
             overflow: hidden;
@@ -83,7 +84,7 @@
             top: calc(100vh - 195% + 580px);
             left: -40%;
             width: 180%;
-            height: 180%;
+            height: calc(var(--stable-vh) * 180); 
             background-size: contain;
             background-position: center;
             transition: transform 0.1s ease-out;
