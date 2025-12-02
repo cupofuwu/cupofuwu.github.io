@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>CupOfUwU</title>
     <!-- SEO and Social Sharing -->
     <meta name="description" content="CupOfUwU, artist and animator">
@@ -38,7 +38,6 @@
         html {
             font-size: clamp(14px, 2.5vw, 16px);
             scroll-behavior: smooth;
-			--stable-vh: 1vh;
         }
 
         body {
@@ -56,10 +55,8 @@
         /* Parallax Background Container */
         .parallax-background-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(var(--stable-vh) * 100);   /* ← теперь не прыгает */
+            inset: 0;  /* Вместо top/left/width/height: 100% */
+			height: 100dvh;
             perspective: 1000px;
             z-index: -10;
             overflow: hidden;
@@ -84,7 +81,7 @@
             top: calc(100vh - 195% + 580px);
             left: -40%;
             width: 180%;
-            height: calc(var(--stable-vh) * 180); 
+            height: 180%;
             background-size: contain;
             background-position: center;
             transition: transform 0.1s ease-out;
@@ -94,6 +91,7 @@
         .parallax-midground {
             background: url('./images/midground.png') center/contain no-repeat; /* Replace with your midground image */
             transform: translateZ(0px);
+			height: 180dvh;
             z-index: -1;
             opacity: 1.0; /* Adjust for layering */
         }
@@ -102,6 +100,7 @@
         .parallax-foreground {
             background: url('./images/foreground.png') center/contain no-repeat; /* Replace with your foreground image */
             transform: translateZ(0px);
+			height: 180dvh;
             z-index: 0;
             opacity: 1.0; /* Adjust for layering */
         }
