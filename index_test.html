@@ -85,43 +85,25 @@
             width: 180%;
             height: 180%;
             background-size: contain;
-            background-position: center;
+            background-position: center 78%;
             transition: transform 0.1s ease-out;
         }
 
         /* Midground Layer */
         .parallax-midground {
-			left: -40%;
-			width: 180%;
-			height: 180%;
-			bottom: -40%;                /* вместо top: -40% */
-			top: auto;
-			
-			background: url('./images/midground.png') 
-						center bottom / contain no-repeat;
-			
-			transform: translateZ(0px);
-			z-index: -1;
-		}
+            background: url('./images/midground.png') center/contain no-repeat; /* Replace with your midground image */
+            transform: translateZ(0px);
+            z-index: -1;
+            opacity: 1.0; /* Adjust for layering */
+        }
 
         /* Foreground Layer */
         .parallax-foreground {
-			position: absolute;
-			left: -40%;
-			width: 180%;
-			height: 180%;                /* оставляем как было */
-			top: auto;                   /* убираем все фиксированные top/-50vh */
-			bottom: -40%;                /* ← КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
-			
-			background: url('./images/foreground.png') 
-						center bottom / contain no-repeat;
-			
-			background-position: center 100%;   /* или просто center bottom */
-			background-origin: border-box;
-			
-			transform: translateZ(0px);
-			z-index: 0;
-		}
+            background: url('./images/foreground.png') center/contain no-repeat; /* Replace with your foreground image */
+            transform: translateZ(0px);
+            z-index: 0;
+            opacity: 1.0; /* Adjust for layering */
+        }
 
         .container {
             max-width: 1200px;
