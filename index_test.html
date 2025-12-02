@@ -69,10 +69,10 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 120%;
-            height: 120%;
-            background: url('./images/background.jpg') center/cover no-repeat; /* Replace with your background image */
-            transform: translateZ(-200px);
+            width: 100%;
+            height: 100%;
+            background: url('./images/background.png') center/cover no-repeat; /* Replace with your background image */
+            transform: translateZ(0px);
             z-index: -2;
             opacity: 1; /* Adjust for visibility */
         }
@@ -92,7 +92,7 @@
         /* Midground Layer */
         .parallax-midground {
             background: url('./images/midground.png') center/contain no-repeat; /* Replace with your midground image */
-            transform: translateZ(-100px);
+            transform: translateZ(0px);
             z-index: -1;
             opacity: 1.0; /* Adjust for layering */
         }
@@ -1008,7 +1008,7 @@
 				const translateY = (y / window.innerHeight) * maxTranslate;
 
 
-				midground.style.transform = `translateZ(-100px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+				midground.style.transform = `translateZ(0px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
 				foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 			});
 
@@ -1016,7 +1016,7 @@
 			document.addEventListener('mouseleave', () => {
 				if (isGyroActive) return;
 
-				midground.style.transform = `translateZ(-100px)`;
+				midground.style.transform = `translateZ(0px)`;
 				foreground.style.transform = `translateZ(0px)`;
 			});
 
@@ -1096,7 +1096,7 @@
 						// Применение стилей (С УЧЕТОМ БАЗОВОГО МАСШТАБИРОВАНИЯ)
 
 						
-						midground.style.transform = `translateZ(-100px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+						midground.style.transform = `translateZ(0px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
 						
 						foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 					}
