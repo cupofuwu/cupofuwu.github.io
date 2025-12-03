@@ -80,10 +80,11 @@
         /* Parallax Layers */
         .parallax-layer {
             position: absolute;
-            top: -40%;
+            top: calc(-40% + (1080px - 100vh) * 0.547);
             left: -40%;
             width: 180%;
             height: 180%;
+			
             background-size: contain;
             background-position: center;
             transition: transform 0.1s ease-out;
@@ -91,47 +92,19 @@
 
         /* Midground Layer */
         .parallax-midground {
-            background: url('./images/midground.png') center/contain no-repeat;
-			
-			/* Ключевой момент: выравниваем по нижнему краю + отступ 580px от низа оригинала */
-			background-position-y: calc(100% - (580px * var(--scale)));
-			
-			/* Автоматически вычисляем масштаб изображения */
-			--scale: calc(100vw / 2520); /* 2520 — ширина твоей оригинальной картинки */
-			
-			/* На вертикальных экранах (мобильных) может масштабироваться по высоте */
-			@media (orientation: portrait) {
-				--scale: calc(100vh / 2520);
-			}
-			
-			/* Дополнительная страховка: если высота окна больше, чем нужно — не даём картинке "уезжать" вверх */
-			background-position-x: center;
-			transform: translateZ(0);
-			z-index: -1;
-			opacity: 1;
+            background: url('./images/midground.png') center/contain no-repeat; /* Replace with your midground image */
+            transform: translateZ(0px);
+            z-index: -1;
+            opacity: 1.0; /* Adjust for layering */
         }
 
         /* Foreground Layer */
         .parallax-foreground {
-			background: url('./images/foreground.png') center/contain no-repeat;
-			
-			/* Ключевой момент: выравниваем по нижнему краю + отступ 580px от низа оригинала */
-			background-position-y: calc(100% - (580px * var(--scale)));
-			
-			/* Автоматически вычисляем масштаб изображения */
-			--scale: calc(100vw / 2520); /* 2520 — ширина твоей оригинальной картинки */
-			
-			/* На вертикальных экранах (мобильных) может масштабироваться по высоте */
-			@media (orientation: portrait) {
-				--scale: calc(100vh / 2520);
-			}
-			
-			/* Дополнительная страховка: если высота окна больше, чем нужно — не даём картинке "уезжать" вверх */
-			background-position-x: center;
-			transform: translateZ(0);
-			z-index: 0;
-			opacity: 1;
-		}
+            background: url('./images/foreground.png') center/contain no-repeat; /* Replace with your foreground image */
+            transform: translateZ(0px);
+            z-index: 0;
+            opacity: 1.0; /* Adjust for layering */
+        }
 
         .container {
             max-width: 1200px;
