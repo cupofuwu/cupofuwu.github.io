@@ -1089,7 +1089,8 @@
 
 						const translateX = (clampedGamma / maxAngle) * maxTranslate;
 						// Ось Y инвертирована, чтобы движение вперед (beta) сдвигало фон вверх
-						const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
+						//const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
+						const translateY = ((clampedBeta / maxAngle)) * maxTranslate; 
 						
 						const tiltX = (clampedBeta / maxAngle) * maxTilt;
 						const tiltY = (clampedGamma / maxAngle) * maxTilt;
