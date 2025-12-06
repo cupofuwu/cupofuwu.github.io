@@ -10,11 +10,9 @@
     <meta property="og:image" content="./icons/profile_icon.jpg">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-	<link rel="icon" type="image/png" href="./icons/favicon.png"/>
+    <link rel="icon" type="image/png" href="./icons/favicon.png"/>
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka+One&family=Caveat&family=Inter:wght@400&display=swap">
-    <!-- Particles.js 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>-->
     <style>
         :root {
             --primary-color: #FF66CC; /* Vibrant pink */
@@ -29,6 +27,9 @@
             --glow-color: #FF99EE; /* Softer pink for glow effects */
             --highlight-color: #99FFCC; /* Bright teal for highlights */
             --dark-accent: #1E1E2F; /* Deeper background for cards */
+			--simple-shadow-color: #3b006e;
+			--zoom-compensation: 1; /* будет обновляться JS */
+			--header-offset: calc(-25% - max(0px, (100vh - 840px) * 0.9));
         }
 
         * {
@@ -54,41 +55,58 @@
             position: relative;
         }
 
-        /* Particle Background Container */
-        #particles-js {
+        /* Parallax Background Container */
+        .parallax-background-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 0.2;
+            perspective: 1000px;
+            z-index: -10;
+            overflow: hidden;
         }
 
-        /* Subtle furry texture overlay */
-        body::after {
-            content: '';
+        /* Static Background */
+        .parallax-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('./images/laboratory-mouse.svg') repeat;
-            opacity: 0.1;
-            z-index: -1;
+            background: url('./images/background.png') center/cover no-repeat; /* Replace with your background image */
+            transform: translateZ(0px);
+            z-index: -2;
+            opacity: 1; /* Adjust for visibility */
         }
 
-        /* Subtle diagonal gradient overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary-color) 0%, transparent 70%);
-            opacity: 0.1;
+        /* Parallax Layers */
+        .parallax-layer {
+            position: absolute;
+            top: calc(var(--header-offset) * var(--zoom-compensation));
+            left: -40%;
+            width: 180%;
+            height: 180%;
+			
+            background-size: contain;
+            background-position: center;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Midground Layer */
+        .parallax-midground {
+            background: url('./images/midground.png') center/contain no-repeat; /* Replace with your midground image */
+            transform: translateZ(0px);
             z-index: -1;
+            opacity: 1.0; /* Adjust for layering */
+        }
+
+        /* Foreground Layer */
+        .parallax-foreground {
+            background: url('./images/foreground.png') center/contain no-repeat; /* Replace with your foreground image */
+            transform: translateZ(0px);
+            z-index: 0;
+            opacity: 1.0; /* Adjust for layering */
         }
 
         .container {
@@ -98,6 +116,8 @@
             display: flex;
             flex-direction: column;
             gap: 4rem;
+            position: relative;
+            z-index: 1; /* Ensure content is above parallax layers */
         }
 
         /* Top Navigation (non-sticky) */
@@ -155,28 +175,29 @@
             font-size: clamp(2.5rem, 6vw, 4rem);
             text-shadow: 0 0 8px var(--primary-color);
         }
-		
-		.no-preview {
-			width: 100%;
-			height: 150px;
-			background: #FFFFFF; /* White background */
-			border-radius: 0.5rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-family: 'Quicksand', sans-serif;
-			font-size: 1.2rem;
-			font-weight: 600;
-			color: #333333; /* Dark text for contrast */
-			text-align: center;
-			transition: var(--transition);
-		}
+
+        .no-preview {
+            width: 100%;
+            height: 150px;
+            background: #FFFFFF;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333333;
+            text-align: center;
+            transition: var(--transition);
+        }
 
         .commissions-status {
             font-family: 'Caveat', cursive;
             font-size: 2.2rem;
             color: #FF4D4D;
             letter-spacing: 0.05rem;
+			text-shadow: 1px 1px var(--simple-shadow-color);
         }
 
         .commissions {
@@ -227,7 +248,6 @@
             background-clip: padding-box;
         }
 
-        
         .pricing-card::before {
             content: '';
             position: absolute;
@@ -334,7 +354,7 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-color);
-            margin-bottom: 1rem Sverre;
+            margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.06rem;
             text-shadow: 0 0 6px var(--glow-color);
@@ -593,35 +613,35 @@
         }
 
         .progress-bar {
-			height: 20px; /* Увеличиваем высоту для размещения текста */
-			background: #333;
-			border-radius: 4px;
-			overflow: hidden;
-			margin-top: 0.5rem;
-			position: relative; /* Для позиционирования текста */
-		}
+            height: 20px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            position: relative;
+        }
 
-		.progress-bar span {
-			display: block;
-			height: 100%;
-			background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-			transition: width 0.5s ease;
-		}
+        .progress-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.5s ease;
+        }
 
-		.progress-bar::after {
-			content: attr(data-percentage) '%'; /* Отображаем процент */
-			position: absolute;
-			top: 50%; /* Центрируем по вертикали */
-			right: 10px; /* Отступ справа */
-			transform: translateY(-50%); /* Корректировка центрирования */
-			font-family: 'Inter', sans-serif;
-			font-size: 0.9rem;
-			color: var(--text-color);
-			text-shadow: 0 0 4px var(--glow-color);
-			z-index: 1; /* Убедимся, что текст поверх полосы */
-		}
-		
-		/* Contact Section */
+        .progress-bar::after {
+            content: attr(data-percentage) '%';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            text-shadow: 0 0 4px var(--glow-color);
+            z-index: 1;
+        }
+
+        /* Contact Section */
         .contact {
             display: flex;
             flex-direction: column;
@@ -634,9 +654,6 @@
             font-size: 2rem;
             text-shadow: 0 0 8px var(--accent-color);
         }
-
-        /*.recent-1 { opacity: 0.5; }
-        .recent-2 { opacity: 0.7; }*/
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -692,84 +709,36 @@
                 grid-template-columns: 1fr;
             }
         }
-		
-		/* === Стили для ссылок в примерах (в .details) === */
-		.details .examples-list {
-			list-style: none;
-			padding: 0;
-			margin: 0.8rem 0;
-		}
 
-		.details .examples-list li {
-			margin-bottom: 0.6rem;
-		}
+        /* Permission Button Style */
+        .orientation-permission {
+            margin: 1rem auto;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
 
-		.details .examples-list a {
-			color: var(--accent-color);
-			text-decoration: none;
-			font-weight: 500;
-			font-family: 'Inter', sans-serif;
-			font-size: 0.95rem;
-			padding: 0.35rem 0.75rem;
-			border-radius: 0.6rem;
-			background: rgba(102, 204, 255, 0.08);
-			border: 1px solid rgba(102, 204, 255, 0.2);
-			display: inline-block;
-			transition: var(--transition);
-			position: relative;
-			overflow: hidden;
-		}
-
-		.details .examples-list a::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: -100%;
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-			transition: left 0.6s ease;
-			z-index: 0;
-		}
-
-		.details .examples-list a span {
-			position: relative;
-			z-index: 1;
-		}
-
-		.details .examples-list a:hover {
-			color: var(--text-color);
-			background: rgba(102, 204, 255, 0.2);
-			border-color: var(--accent-color);
-			transform: translateY(-1px);
-			box-shadow: 0 0 10px rgba(102, 204, 255, 0.4);
-		}
-
-		.details .examples-list a:hover::before {
-			left: 100%;
-		}
-
-		.details .examples-list a:active {
-			transform: translateY(0);
-		}
-
-		/* Иконка внешней ссылки */
-		.details .examples-list a::after {
-			content: '↗';
-			margin-left: 0.4rem;
-			font-size: 0.8em;
-			opacity: 0.7;
-			transition: opacity 0.3s ease;
-		}
-
-		.details .examples-list a:hover::after {
-			opacity: 1;
-		}
+        .orientation-permission:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-    <!-- Particle Background -->
-    <div id="particles-js"></div>
+    <!-- Parallax Background Container -->
+    <div class="parallax-background-container">
+        <div class="parallax-background"></div>
+        <div class="parallax-layer parallax-midground"></div>
+        <div class="parallax-layer parallax-foreground"></div>
+    </div>
 
     <div class="container">
         <!-- Top Navigation (non-sticky) -->
@@ -782,12 +751,12 @@
 
         <!-- Header Section -->
         <header class="header" id="home">
-            <div class="profile-img" aria-label="CupOfUwU">
+            <div class="profile-img" aria-label="CupOfUwU's fursona">
                 <img src="./icons/profile_icon.jpg" alt="CupOfUwU's fursona, a pink cat with blue eyes" loading="lazy">
             </div>
             <h1>CupOfUwU</h1>
             <p class="commissions-status">Commissions Closed</p>
-			<p class="commissions-status">But I can offer a slot, with a longer commission completion time</p>
+            <button class="orientation-permission" style="display: none;">Enable Motion</button>
         </header>
 
         <!-- Social Links -->
@@ -812,14 +781,14 @@
         <!-- To-Do List Section -->
         <section class="todo" id="todo">
             <h2>TO-DO list for projects</h2>
-			<!--
+            <!--
             <div class="filter-buttons" data-section="todo">
                 <button data-filter="all" class="active">All</button>
                 <button data-filter="recent">Recent</button>
                 <button data-filter="current">Current</button>
                 <button data-filter="upcoming">Upcoming</button>
             </div>
-			-->
+            -->
             <div class="item-grid" id="tasks"></div>
         </section>
 
@@ -881,28 +850,8 @@
     </div>
 
     <script>
-		/*
-        // Particle Background Initialization
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 50, density: { enable: true, value_area: 800 } },
-                color: { value: ['#FF66CC', '#66CCFF', '#FFCC66'] },
-                shape: { type: 'image', image: { src: './icons/dust.webp', width: 20, height: 20 } },
-                opacity: { value: 0.5, random: true },
-                size: { value: 10, random: true },
-                line_linked: { enable: false },
-                move: { enable: true, speed: 2, direction: 'none', random: true }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' } },
-                modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } }
-            },
-            retina_detect: true
-        });
-		*/
-        // To-Do List Data
-        const tasks = [
+    // --- ГЛОБАЛЬНЫЕ ДАННЫЕ (Оставлены пустыми, как в оригинале) ---
+    const tasks = [
             {
                 text: "Halloween animation [Done]",
                 description: "Finished animation",
@@ -985,146 +934,321 @@
                 category: "project"
             }
         ];
+    
+    // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ГИРОСКОПА ---
+    // Инициализируем нулем для предотвращения ошибок 'Cannot read properties of null' на десктопе
+    let isGyroActive = false; // НОВАЯ ПЕРЕМЕННАЯ: Флаг для отключения мыши
+	let initialBeta = 0;
+	let initialGamma = 0;
+	let isCalibrated = false;
 
-        // Create Progress Bar
-        function createProgressBar(percentage) {
-			return `<div class="progress-bar" data-percentage="${percentage}"><span style="width: ${percentage}%"></span></div>`;
-		}
+    // --- ФУНКЦИИ ---
+	
+	function updateZoomCompensation() {
+	  // devicePixelRatio меняется при обычном zoom (Ctrl+-) в большинстве браузеров
+	  // и при pinch-to-zoom на мобильных
+	  const zoom = window.devicePixelRatio;
+	  
+	  if (zoom > 1)
+		zoom = 1;
+	  
+	  // Если у вас 100% — zoom ≈ 1, 125% → 1.25, 150% → 1.5 и т.д.
+	  document.documentElement.style.setProperty('--zoom-compensation', zoom);
+	}
 
-        // Determine Task Category
-        function getTaskCategory(task, index, tasks) {
-            const currentIndex = tasks.findIndex(t => t.current);
-            if (task.current) return 'current';
-            if (currentIndex === -1) return 'upcoming'; // No current task, all are upcoming
-            return index < currentIndex ? 'recent' : 'upcoming';
+	window.addEventListener('resize', updateZoomCompensation);
+	window.addEventListener('orientationchange', updateZoomCompensation);
+	// Для некоторых браузеров (особенно старых) может понадобиться
+	window.visualViewport?.addEventListener('resize', updateZoomCompensation);
+
+    // Функция для определения мобильного устройства (по наличию сенсорного экрана)
+    function isMobileOrTablet() {
+        // Проверяем наличие 'ontouchstart' (стандарт) или maxTouchPoints > 0 (новый стандарт)
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+
+    // Create Progress Bar
+    function createProgressBar(percentage) {
+        return `<div class="progress-bar" data-percentage="${percentage}"><span style="width: ${percentage}%"></span></div>`;
+    }
+
+    // Determine Task Category
+    function getTaskCategory(task, index, tasks) {
+        const currentIndex = tasks.findIndex(t => t.current);
+        if (task.current) return 'current';
+        if (currentIndex === -1) return 'upcoming';
+        return index < currentIndex ? 'recent' : 'upcoming';
+    }
+
+    // Display Items (Tasks or Projects)
+    function displayItems(data, containerId, section, filter = 'all') {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error(`Element with ID "${containerId}" not found`);
+            return;
+        }
+        container.innerHTML = '';
+
+        let filteredItems = [];
+        if (section === 'todo') {
+            filteredItems = data.map((item, index) => ({
+                ...item,
+                category: getTaskCategory(item, index, data)
+            }));
+            if (filter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === filter);
+            }
+        } else {
+            filteredItems = data.filter(item => filter === 'all' || item.category === filter);
         }
 
-        // Display Items (Tasks or Projects)
-		function displayItems(data, containerId, section, filter = 'all') {
-			const container = document.getElementById(containerId);
-			if (!container) {
-				console.error(`Element with ID "${containerId}" not found`);
+        filteredItems.forEach((item, index) => {
+            const itemDiv = document.createElement('a');
+            let classNames = `item ${item.category}`;
+            if (item.category === 'recent') {
+                const recentCount = filteredItems.filter(i => i.category === 'recent').length;
+                const recentIndex = filteredItems.slice(0, index + 1).filter(i => i.category === 'recent').length;
+                if (recentIndex === recentCount) classNames += ' recent-1';
+                else if (recentIndex === recentCount - 1) classNames += ' recent-2';
+            }
+            if (item.current) {
+                classNames += ' current';
+            }
+            itemDiv.className = classNames;
+            itemDiv.href = item.url;
+            itemDiv.setAttribute('data-category', item.category);
+
+            let imageHtml = '';
+            if (item.image) {
+                imageHtml = `<img src="${item.image}" alt="Preview of ${item.text}" loading="lazy">`;
+            } else {
+                imageHtml = `<div class="no-preview">No Preview</div>`;
+            }
+
+            const titleHtml = `<div class="item-title">${item.text}</div>`;
+            const descriptionHtml = `<small>${item.description}</small>`;
+            const progressBar = createProgressBar(item.percentage);
+
+            itemDiv.innerHTML = `${imageHtml}${titleHtml}${descriptionHtml}${progressBar}`;
+            container.appendChild(itemDiv);
+        });
+    }
+
+    // Filter Buttons
+    function setupFilterButtons() {
+        const buttonGroups = document.querySelectorAll('.filter-buttons');
+        buttonGroups.forEach(group => {
+            const section = group.dataset.section;
+            const buttons = group.querySelectorAll('button');
+            if (buttons.length === 0) {
+                console.warn(`No filter buttons found for ${section}`);
+                return;
+            }
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    group.querySelector('button.active')?.classList.remove('active');
+                    button.classList.add('active');
+                    if (section === 'todo') {
+                        displayItems(tasks, 'tasks', section, button.dataset.filter);
+                    } else {
+                        displayItems(projects, 'projects-grid', section, button.dataset.filter);
+                    }
+                });
+            });
+        });
+    }
+
+    // Easter Egg: Profile Image Click
+    function setupEasterEgg() {
+			const profileImg = document.querySelector('.profile-img');
+			if (!profileImg) {
+				console.warn('Profile image not found');
 				return;
 			}
-			container.innerHTML = ''; // Clear existing content
-
-			let filteredItems = [];
-			if (section === 'todo') {
-				// Assign categories to tasks based on their position relative to current
-				filteredItems = data.map((item, index) => ({
-					...item,
-					category: getTaskCategory(item, index, data)
-				}));
-
-				// Apply filter
-				if (filter !== 'all') {
-					filteredItems = filteredItems.filter(item => item.category === filter);
-				}
-			} else {
-				// For projects, use existing categories
-				filteredItems = data.filter(item => filter === 'all' || item.category === filter);
-			}
-
-			// Render items
-			filteredItems.forEach((item, index) => {
-				const itemDiv = document.createElement('a');
-				let classNames = `item ${item.category}`;
-				if (item.category === 'recent') {
-					// Apply recent-1, recent-2 based on position in filtered recent items
-					const recentCount = filteredItems.filter(i => i.category === 'recent').length;
-					const recentIndex = filteredItems.slice(0, index + 1).filter(i => i.category === 'recent').length;
-					if (recentIndex === recentCount) classNames += ' recent-1';
-					else if (recentIndex === recentCount - 1) classNames += ' recent-2';
-				}
-				if (item.current) {
-					classNames += ' current';
-				}
-				itemDiv.className = classNames;
-				itemDiv.href = item.url;
-				itemDiv.setAttribute('data-category', item.category);
-
-				// Add image or "No Preview" placeholder
-				let imageHtml = '';
-				if (item.image) {
-					imageHtml = `<img src="${item.image}" alt="Preview of ${item.text}" loading="lazy">`;
-				} else {
-					imageHtml = `<div class="no-preview">No Preview</div>`;
-				}
-
-				const titleHtml = `<div class="item-title">${item.text}</div>`;
-				const descriptionHtml = `<small>${item.description}</small>`;
-				const progressBar = createProgressBar(item.percentage);
-
-				itemDiv.innerHTML = `${imageHtml}${titleHtml}${descriptionHtml}${progressBar}`;
-				container.appendChild(itemDiv);
+			profileImg.addEventListener('click', () => {
+				const confetti = document.createElement('div');
+				confetti.style.position = 'fixed';
+				confetti.style.top = '50%';
+				confetti.style.left = '50%';
+				confetti.style.pointerEvents = 'none';
+				confetti.innerHTML = '✨✨';
+				confetti.style.fontSize = '2rem';
+				confetti.style.animation = 'confetti 1s ease forwards';
+				document.body.appendChild(confetti);
+				setTimeout(() => confetti.remove(), 1000);
 			});
 		}
 
-        // Filter Buttons
-        function setupFilterButtons() {
-            const buttonGroups = document.querySelectorAll('.filter-buttons');
-            buttonGroups.forEach(group => {
-                const section = group.dataset.section;
-                const buttons = group.querySelectorAll('button');
-                if (buttons.length === 0) {
-                    console.warn(`No filter buttons found for ${section}`);
-                    return;
-                }
-                buttons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        group.querySelector('button.active')?.classList.remove('active');
-                        button.classList.add('active');
-                        if (section === 'todo') {
-                            displayItems(tasks, 'tasks', section, button.dataset.filter);
-                        } else {
-                            displayItems(projects, 'projects-grid', section, button.dataset.filter);
-                        }
-                    });
-                });
-            });
+		// Parallax Effect for Background (С ГИРОСКОПОМ И БЕЗ МЫШИ НА МОБИЛЬНЫХ)
+		function setupParallax() {
+			const container = document.querySelector('.parallax-background-container');
+			if (!container) {
+				console.warn('Parallax background container not found');
+				return;
+			}
+
+			const midground = document.querySelector('.parallax-midground');
+			const foreground = document.querySelector('.parallax-foreground');
+			
+			// --- Mouse Movement (ВСЕГДА ВКЛЮЧЕНО НА СТАРТЕ) ---
+			document.addEventListener('mousemove', (e) => {
+				// Если гироскоп активен, игнорируем движение мыши/тача
+				if (isGyroActive) return; 
+				
+				const x = e.clientX - window.innerWidth / 2;
+				const y = e.clientY - window.innerHeight / 2;
+				const maxTilt = 10;
+				const maxTranslate = 50;
+
+				const tiltX = (y / window.innerHeight) * maxTilt;
+				const tiltY = -(x / window.innerWidth) * maxTilt;
+				const translateX = (x / window.innerWidth) * maxTranslate;
+				const translateY = (y / window.innerHeight) * maxTranslate;
+
+
+				midground.style.transform = `translateZ(0px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+				foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+			});
+
+			// Reset transforms when mouse leaves
+			document.addEventListener('mouseleave', () => {
+				if (isGyroActive) return;
+
+				midground.style.transform = `translateZ(0px)`;
+				foreground.style.transform = `translateZ(0px)`;
+			});
+
+
+			// --- Device Orientation for Mobile (Гироскоп) ---
+			if (window.DeviceOrientationEvent) {
+				window.addEventListener('deviceorientation', (e) => {
+					
+					let rawGamma = e.gamma; // Наклон влево/вправо
+					let rawBeta = e.beta;   // Наклон вперед/назад
+					let adjustedGamma = 0;
+					let adjustedBeta = 0;
+					
+					// Получаем угол поворота экрана (0, 90, 180, -90)
+					// Используем window.screen.orientation.angle (современный) или window.orientation (устаревший)
+					const orientationAngle = (window.screen.orientation && window.screen.orientation.angle) || (window.orientation || 0);
+
+					// --- 1. КОРРЕКЦИЯ ДАННЫХ В ЗАВИСИМОСТИ ОТ ОРИЕНТАЦИИ ---
+					
+					if (orientationAngle === 90 || orientationAngle === -90 || orientationAngle === 270) {
+						// ЛАНДШАФТНЫЙ РЕЖИМ (Beta и Gamma меняются местами)
+						adjustedGamma = rawBeta;
+						adjustedBeta = rawGamma;
+						
+						if (orientationAngle === 90 || orientationAngle === -270) {
+							adjustedGamma = -adjustedGamma; // Инверсия для одного из ландшафтов
+						} else {
+							adjustedBeta = -adjustedBeta;
+						}
+
+					} else {
+						// ПОРТРЕТНЫЙ РЕЖИМ (0 или 180)
+						adjustedGamma = rawGamma;
+						adjustedBeta = rawBeta;
+
+						if (orientationAngle === 180) {
+							adjustedGamma = -adjustedGamma; // Инверсия при портрете "вверх ногами"
+							adjustedBeta = -adjustedBeta;
+						}
+					}
+
+					// --- 2. ШАГ КАЛИБРОВКИ ---
+					
+					if (!isCalibrated) {
+						if (typeof adjustedBeta === 'number' && typeof adjustedGamma === 'number') {
+							// Используем СКОРРЕКТИРОВАННЫЕ данные для калибровки
+							initialBeta = adjustedBeta;
+							initialGamma = adjustedGamma;
+							isCalibrated = true;
+							isGyroActive = true; 
+							console.log(`Parallax calibrated and Gyro Active: Beta=${initialBeta.toFixed(2)}, Gamma=${initialGamma.toFixed(2)}`);
+							return;
+						} else {
+							return; 
+						}
+					}
+
+					// --- 3. РАССЧЕТ ОТНОСИТЕЛЬНОГО НАКЛОНА ---
+					if (isGyroActive) {
+						const beta = adjustedBeta - initialBeta;
+						const gamma = adjustedGamma - initialGamma;
+						
+						const maxTilt = 10;
+						const maxTranslate = 50;
+						const maxAngle = 45; 
+
+						const clampedGamma = Math.max(-maxAngle, Math.min(maxAngle, gamma || 0));
+						const clampedBeta = Math.max(-maxAngle, Math.min(maxAngle, beta || 0));
+
+						const translateX = (clampedGamma / maxAngle) * maxTranslate;
+						// Ось Y инвертирована, чтобы движение вперед (beta) сдвигало фон вверх
+						//const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
+						const translateY = ((clampedBeta / maxAngle)) * maxTranslate; 
+						
+						const tiltX = (clampedBeta / maxAngle) * maxTilt;
+						const tiltY = (clampedGamma / maxAngle) * maxTilt;
+
+						// Применение стилей (С УЧЕТОМ БАЗОВОГО МАСШТАБИРОВАНИЯ)
+
+						
+						midground.style.transform = `translateZ(0px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
+						
+						foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+					}
+				});
+			} else {
+				console.warn('DeviceOrientationEvent not supported');
+			}
+		}
+
+    // Request Device Orientation Permission (iOS)
+    function requestDeviceOrientationPermission() {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        console.log('Device orientation permission granted');
+                    } else {
+                        console.warn('Device orientation permission denied');
+                    }
+                })
+                .catch(console.error);
+        }
+    }
+
+    // Initialize
+    function init() {
+        displayItems(tasks, 'tasks', 'todo');
+        displayItems(projects, 'projects-grid', 'projects');
+        setupFilterButtons();
+        setupEasterEgg();
+        setupParallax();
+		updateZoomCompensation();
+
+        // Show permission button on iOS
+        const permissionButton = document.querySelector('.orientation-permission');
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            permissionButton.style.display = 'block';
+            permissionButton.addEventListener('click', requestDeviceOrientationPermission);
         }
 
-        // Easter Egg: Profile Image Click
-        function setupEasterEgg() {
-            const profileImg = document.querySelector('.profile-img');
-            if (!profileImg) {
-                console.warn('Profile image not found');
-                return;
+        // Add confetti keyframes
+        const styleSheet = document.createElement('style');
+        styleSheet.innerHTML = `
+            @keyframes confetti {
+                0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                100% { transform: translate(-50%, -100%) scale(2); opacity: 0; }
             }
-            profileImg.addEventListener('click', () => {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.top = '50%';
-                confetti.style.left = '50%';
-                confetti.style.pointerEvents = 'none';
-                confetti.innerHTML = '✨✨';
-                confetti.style.fontSize = '2rem';
-                confetti.style.animation = 'confetti 1s ease forwards';
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 1000);
-            });
-        }
+        `;
+        document.head.appendChild(styleSheet);
+    }
 
-        // Initialize
-        function init() {
-            displayItems(tasks, 'tasks', 'todo'); // Render to-do list
-            displayItems(projects, 'projects-grid', 'projects'); // Render projects
-            setupFilterButtons(); // Set up filter button event listeners
-            setupEasterEgg(); // Set up profile image easter egg
-
-            // Add confetti keyframes
-            const styleSheet = document.createElement('style');
-            styleSheet.innerHTML = `
-                @keyframes confetti {
-                    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-                    100% { transform: translate(-50%, -100%) scale(2); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(styleSheet);
-        }
-
-        // Run initialization when DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+    // Run initialization
+    document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
