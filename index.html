@@ -850,7 +850,7 @@
     </div>
 
     <script>
-    // --- ГЛОБАЛЬНЫЕ ДАННЫЕ (Оставлены пустыми, как в оригинале) ---
+    
     const tasks = [
             {
                 text: "Halloween animation [Done]",
@@ -935,44 +935,35 @@
             }
         ];
     
-    // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ГИРОСКОПА ---
-    // Инициализируем нулем для предотвращения ошибок 'Cannot read properties of null' на десктопе
-    let isGyroActive = false; // НОВАЯ ПЕРЕМЕННАЯ: Флаг для отключения мыши
+    
+    let isGyroActive = false;
 	let initialBeta = 0;
 	let initialGamma = 0;
 	let isCalibrated = false;
 
-    // --- ФУНКЦИИ ---
+
 	
 	function updateZoomCompensation() {
-	  // devicePixelRatio меняется при обычном zoom (Ctrl+-) в большинстве браузеров
-	  // и при pinch-to-zoom на мобильных
-	  const zoom = window.devicePixelRatio;
+	  let zoom = window.devicePixelRatio;
 	  
 	  if (zoom > 1)
 		zoom = 1;
 	  
-	  // Если у вас 100% — zoom ≈ 1, 125% → 1.25, 150% → 1.5 и т.д.
 	  document.documentElement.style.setProperty('--zoom-compensation', zoom);
 	}
 
 	window.addEventListener('resize', updateZoomCompensation);
 	window.addEventListener('orientationchange', updateZoomCompensation);
-	// Для некоторых браузеров (особенно старых) может понадобиться
 	window.visualViewport?.addEventListener('resize', updateZoomCompensation);
 
-    // Функция для определения мобильного устройства (по наличию сенсорного экрана)
     function isMobileOrTablet() {
-        // Проверяем наличие 'ontouchstart' (стандарт) или maxTouchPoints > 0 (новый стандарт)
         return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     }
 
-    // Create Progress Bar
     function createProgressBar(percentage) {
         return `<div class="progress-bar" data-percentage="${percentage}"><span style="width: ${percentage}%"></span></div>`;
     }
 
-    // Determine Task Category
     function getTaskCategory(task, index, tasks) {
         const currentIndex = tasks.findIndex(t => t.current);
         if (task.current) return 'current';
@@ -980,7 +971,6 @@
         return index < currentIndex ? 'recent' : 'upcoming';
     }
 
-    // Display Items (Tasks or Projects)
     function displayItems(data, containerId, section, filter = 'all') {
         const container = document.getElementById(containerId);
         if (!container) {
@@ -1034,7 +1024,6 @@
         });
     }
 
-    // Filter Buttons
     function setupFilterButtons() {
         const buttonGroups = document.querySelectorAll('.filter-buttons');
         buttonGroups.forEach(group => {
@@ -1058,7 +1047,6 @@
         });
     }
 
-    // Easter Egg: Profile Image Click
     function setupEasterEgg() {
 			const profileImg = document.querySelector('.profile-img');
 			if (!profileImg) {
@@ -1079,7 +1067,6 @@
 			});
 		}
 
-		// Parallax Effect for Background (С ГИРОСКОПОМ И БЕЗ МЫШИ НА МОБИЛЬНЫХ)
 		function setupParallax() {
 			const container = document.querySelector('.parallax-background-container');
 			if (!container) {
@@ -1090,9 +1077,7 @@
 			const midground = document.querySelector('.parallax-midground');
 			const foreground = document.querySelector('.parallax-foreground');
 			
-			// --- Mouse Movement (ВСЕГДА ВКЛЮЧЕНО НА СТАРТЕ) ---
 			document.addEventListener('mousemove', (e) => {
-				// Если гироскоп активен, игнорируем движение мыши/тача
 				if (isGyroActive) return; 
 				
 				const x = e.clientX - window.innerWidth / 2;
@@ -1110,7 +1095,6 @@
 				foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 			});
 
-			// Reset transforms when mouse leaves
 			document.addEventListener('mouseleave', () => {
 				if (isGyroActive) return;
 
@@ -1119,60 +1103,49 @@
 			});
 
 
-			// --- Device Orientation for Mobile (Гироскоп) ---
 			if (window.DeviceOrientationEvent) {
 				window.addEventListener('deviceorientation', (e) => {
 					
-					let rawGamma = e.gamma; // Наклон влево/вправо
-					let rawBeta = e.beta;   // Наклон вперед/назад
+					let rawGamma = e.gamma;
+					let rawBeta = e.beta;
 					let adjustedGamma = 0;
 					let adjustedBeta = 0;
 					
-					// Получаем угол поворота экрана (0, 90, 180, -90)
-					// Используем window.screen.orientation.angle (современный) или window.orientation (устаревший)
 					const orientationAngle = (window.screen.orientation && window.screen.orientation.angle) || (window.orientation || 0);
 
-					// --- 1. КОРРЕКЦИЯ ДАННЫХ В ЗАВИСИМОСТИ ОТ ОРИЕНТАЦИИ ---
 					
 					if (orientationAngle === 90 || orientationAngle === -90 || orientationAngle === 270) {
-						// ЛАНДШАФТНЫЙ РЕЖИМ (Beta и Gamma меняются местами)
 						adjustedGamma = rawBeta;
 						adjustedBeta = rawGamma;
 						
 						if (orientationAngle === 90 || orientationAngle === -270) {
-							adjustedGamma = -adjustedGamma; // Инверсия для одного из ландшафтов
+							adjustedGamma = -adjustedGamma;
 						} else {
 							adjustedBeta = -adjustedBeta;
 						}
 
 					} else {
-						// ПОРТРЕТНЫЙ РЕЖИМ (0 или 180)
 						adjustedGamma = rawGamma;
 						adjustedBeta = rawBeta;
 
 						if (orientationAngle === 180) {
-							adjustedGamma = -adjustedGamma; // Инверсия при портрете "вверх ногами"
+							adjustedGamma = -adjustedGamma;
 							adjustedBeta = -adjustedBeta;
 						}
 					}
-
-					// --- 2. ШАГ КАЛИБРОВКИ ---
 					
 					if (!isCalibrated) {
 						if (typeof adjustedBeta === 'number' && typeof adjustedGamma === 'number') {
-							// Используем СКОРРЕКТИРОВАННЫЕ данные для калибровки
 							initialBeta = adjustedBeta;
 							initialGamma = adjustedGamma;
 							isCalibrated = true;
 							isGyroActive = true; 
-							console.log(`Parallax calibrated and Gyro Active: Beta=${initialBeta.toFixed(2)}, Gamma=${initialGamma.toFixed(2)}`);
 							return;
 						} else {
 							return; 
 						}
 					}
 
-					// --- 3. РАССЧЕТ ОТНОСИТЕЛЬНОГО НАКЛОНА ---
 					if (isGyroActive) {
 						const beta = adjustedBeta - initialBeta;
 						const gamma = adjustedGamma - initialGamma;
@@ -1185,18 +1158,15 @@
 						const clampedBeta = Math.max(-maxAngle, Math.min(maxAngle, beta || 0));
 
 						const translateX = (clampedGamma / maxAngle) * maxTranslate;
-						// Ось Y инвертирована, чтобы движение вперед (beta) сдвигало фон вверх
 						//const translateY = (-(clampedBeta / maxAngle)) * maxTranslate; 
 						const translateY = ((clampedBeta / maxAngle)) * maxTranslate; 
 						
 						const tiltX = (clampedBeta / maxAngle) * maxTilt;
 						const tiltY = (clampedGamma / maxAngle) * maxTilt;
 
-						// Применение стилей (С УЧЕТОМ БАЗОВОГО МАСШТАБИРОВАНИЯ)
 
 						
 						midground.style.transform = `translateZ(0px) translate(${translateX * 0.5}px, ${translateY * 0.5}px) rotateX(${tiltX * 0.5}deg) rotateY(${tiltY * 0.5}deg)`;
-						
 						foreground.style.transform = `translateZ(0px) translate(${translateX}px, ${translateY}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 					}
 				});
